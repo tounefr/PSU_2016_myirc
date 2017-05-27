@@ -5,7 +5,8 @@
 #include <string.h>
 #include "util.h"
 
-char is_number(char *str) {
+char is_number(char *str)
+{
     if (strlen(str) == 0)
         return 0;
     while (*str) {
@@ -16,7 +17,8 @@ char is_number(char *str) {
     return 1;
 }
 
-void        *my_malloc(size_t size) {
+void        *my_malloc(size_t size)
+{
     void    *ptr;
 
     if (!(ptr = calloc(1, size))) {

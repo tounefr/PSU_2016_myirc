@@ -1,19 +1,19 @@
 //
-// Created by toune on 26/05/17.
+// Created by toune on 27/05/17.
 //
 
 #ifndef PROJETS_UTIL_H
 #define PROJETS_UTIL_H
 
 #include <stdio.h>
-#include <string.h>
 #include <errno.h>
 #include <assert.h>
-#include <unistd.h>
+#include <string.h>
 
-#define EXIT_ERROR(returnv, ...) {fprintf(stderr, __VA_ARGS__); return returnv;}
-
+// util.c
 char is_number(char *str);
 void *my_malloc(size_t size);
+
+#define EXIT_ERROR(returnv, ...) {fprintf(stderr, __VA_ARGS__); return returnv;}
 
 #endif //PROJETS_UTIL_H

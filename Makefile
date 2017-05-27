@@ -13,11 +13,16 @@ CC = gcc
 RM = rm -f
 
 SERVER_NAME = server
-SERVER_SRCS =   src/server/main.c \
-                src/server/socket.c \
-                src/server/socket2.c \
-                src/server/socket_server.c \
-                src/common/util.c
+SERVER_SRCS =   src/common/my_select.c \
+                src/common/socket.c \
+                src/common/socket2.c \
+                src/common/util.c \
+                src/server/cbuffer.c \
+                src/server/client.c \
+                src/server/commands.c \
+                src/server/main.c \
+                src/server/server.c \
+                src/server/socket_server.c
 
 SERVER_OBJS = $(SERVER_SRCS:.c=.o)
 
