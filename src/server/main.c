@@ -1,3 +1,12 @@
+/*
+** main.c for  in /home/toune/Documents/Epitech/projets/PSU_2016_myirc
+** 
+** Made by Thomas HENON
+** Login   <thomas.henon@epitech.eu>
+** 
+** Started on  Sat May 27 20:18:12 2017 Thomas HENON
+** Last update Sat May 27 20:18:12 2017 Thomas HENON
+*/
 
 #include <stdlib.h>
 #include "myirc.h"

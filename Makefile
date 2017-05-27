@@ -14,15 +14,21 @@ RM = rm -f
 
 SERVER_NAME = server
 SERVER_SRCS =   src/common/my_select.c \
-                src/common/socket.c \
-                src/common/socket2.c \
+                src/common/network/socket.c \
+                src/common/network/socket2.c \
+                src/common/network/socket_server.c \
                 src/common/util.c \
+                src/common/error.c \
                 src/server/cbuffer.c \
                 src/server/client.c \
                 src/server/commands.c \
                 src/server/main.c \
                 src/server/server.c \
-                src/server/socket_server.c
+                src/server/packet_parser.c \
+                src/server/packet.c \
+                src/server/server_commands.c \
+                src/server/channel_commands.c \
+                src/server/channel.c
 
 SERVER_OBJS = $(SERVER_SRCS:.c=.o)
 

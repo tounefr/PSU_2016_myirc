@@ -1,3 +1,12 @@
+/*
+** util.c for  in /home/toune/Documents/Epitech/projets/PSU_2016_myirc
+** 
+** Made by Thomas HENON
+** Login   <thomas.henon@epitech.eu>
+** 
+** Started on  Sat May 27 20:17:15 2017 Thomas HENON
+** Last update Sat May 27 20:17:15 2017 Thomas HENON
+*/
 
 #include <stdio.h>
 #include <unistd.h>
@@ -26,4 +35,17 @@ void        *my_malloc(size_t size)
         exit(1);
     }
     return ptr;
+}
+
+int     nbr_chars_in_str(char *str, char c) {
+    int i;
+    int n;
+
+    n = 0;
+    i = -1;
+    while (str[++i]) {
+        if (str[i] == c)
+            n++;
+    }
+    return n;
 }

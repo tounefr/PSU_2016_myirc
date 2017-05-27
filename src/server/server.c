@@ -1,3 +1,12 @@
+/*
+** server.c for  in /home/toune/Documents/Epitech/projets/PSU_2016_myirc
+** 
+** Made by Thomas HENON
+** Login   <thomas.henon@epitech.eu>
+** 
+** Started on  Sat May 27 20:18:17 2017 Thomas HENON
+** Last update Sat May 27 20:18:18 2017 Thomas HENON
+*/
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -52,39 +61,30 @@ char                on_exit_client(t_irc_server *irc_server,
     return 1;
 }
 
-char    parse_irc_packet(char *buffer)
-{
-    int i;
-
-    i = 0;
-    if (buffer[i++] == ':') {
-        // TODO: prefixes aren't supported
-        return 0;
-    }
-
-    return 1;
-}
-
-char        on_client_data(t_irc_server *irc_server,
+char            on_client_data(t_irc_server *irc_server,
                            t_irc_client *irc_client)
 {
-    char    buffer[BUFFER_SIZE];
-    int     readv;
-    char    *packet;
+    char        buffer[BUFFER_SIZE];
+    int         readv;
+    char        *raw;
+    t_packet    *packet;
+    char        returnv;
 
-    memset(buffer, 0, BUFFER_SIZE);
     if ((readv = read(irc_client->fd, buffer, BUFFER_SIZE)) <= 0) {
         on_exit_client(irc_server, irc_client);
         printf("client exit\n");
         return 0;
     }
     cbuffer_copy(irc_client->cbuffer, buffer, readv);
-    if (!(packet = cbuffer_extract(irc_client->cbuffer,
+    if (!(raw = cbuffer_extract(irc_client->cbuffer,
                                    IRC_PACKET_SIZE,
                                    "\r\n")))
         EXIT_ERROR(0, "cbuffer_extract failed\n")
-    printf("Recv << %s", packet);
-    return 1;
+    packet = init_packet(raw);
+    printf("Recv << %s", raw);
+    returnv = parse_irc_packet(irc_server, irc_client, packet);
+    //free_packet(packet);
+    return returnv;
 }
 
 char                server_select_on_data(t_server_select *ss,
@@ -100,9 +100,8 @@ char                server_select_on_data(t_server_select *ss,
     client = irc_server->irc_clients;
     while (client) {
         next = client->next;
-        if (FD_ISSET(client->fd, &ss->readfds)) {
+        if (FD_ISSET(client->fd, &ss->readfds))
             on_client_data(irc_server, client);
-        }
         client = next;
     }
     return 1;

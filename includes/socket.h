@@ -1,6 +1,12 @@
-//
-// Created by toune on 26/05/17.
-//
+/*
+** socket.h for  in /home/toune/Documents/Epitech/projets/PSU_2016_myirc
+** 
+** Made by Thomas HENON
+** Login   <thomas.henon@epitech.eu>
+** 
+** Started on  Sun May 28 00:04:00 2017 Thomas HENON
+** Last update Sun May 28 00:04:01 2017 Thomas HENON
+*/
 
 #ifndef PROJETS_SOCKET_H
 #define PROJETS_SOCKET_H
