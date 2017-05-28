@@ -54,10 +54,6 @@ char parse_irc_packet(t_irc_server *irc_server,
     buffer_tmp = strdup_irc_packet(packet->raw);
     while ((token = strtok(buffer_tmp, " "))) {
         buffer_tmp = NULL;
-        if (token[0] == ':') {
-            free(buffer_tmp);
-            EXIT_ERROR(0, "Prefixes unsupported\n")
-        }
         i = -1;
         while (++i < N_COMMAND_CALLBACK) {
             if (!strcmp(commands_callbacks[i].cmd, token)) {
@@ -73,6 +69,21 @@ char parse_irc_packet(t_irc_server *irc_server,
     }
     free(buffer_tmp);
     EXIT_ERROR(0, "Unknown packet\n")
+}
+
+char    buffer_rm_crlf(char *buffer) {
+    int i;
+
+    i = 0;
+    while (buffer[i]) {
+        if (buffer[i] == '\r' && buffer[i + 1] == '\n') {
+            buffer[i] = '\0';
+            buffer[i + 1] = '\0';
+            return 1;
+        }
+        i++;
+    }
+    return 0;
 }
 
 char send_reply_packet(int fd, int code, char *buffer) {

@@ -76,15 +76,16 @@ char            on_client_data(t_irc_server *irc_server,
         return 0;
     }
     cbuffer_copy(irc_client->cbuffer, buffer, readv);
-    if (!(raw = cbuffer_extract(irc_client->cbuffer,
+    //EXIT_ERROR(0, "cbuffer_extract failed\n")
+    while ((raw = cbuffer_extract(irc_client->cbuffer,
                                    IRC_PACKET_SIZE,
-                                   "\r\n")))
-        EXIT_ERROR(0, "cbuffer_extract failed\n")
-    packet = init_packet(raw);
-    printf("Recv << %s", raw);
-    returnv = parse_irc_packet(irc_server, irc_client, packet);
-    //free_packet(packet);
-    return returnv;
+                                   "\r\n"))) {
+        packet = init_packet(raw);
+        printf("Recv << %s", raw);
+        returnv = parse_irc_packet(irc_server, irc_client, packet);
+        //free_packet(packet);
+    }
+    return 1;
 }
 
 char                server_select_on_data(t_server_select *ss,

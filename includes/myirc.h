@@ -90,7 +90,7 @@ typedef struct s_packet
     char        *content;
 } t_packet;
 
-# define N_COMMAND_CALLBACK 7
+# define N_COMMAND_CALLBACK 9
 typedef struct s_command_callback
 {
     char *cmd;
@@ -106,6 +106,9 @@ int my_select(t_server_select *ss, t_irc_server *irc_server);
 t_circular_buffer       *cbuffer_new(int size);
 void    cbuffer_debug(t_circular_buffer *cbuffer);
 char cbuffer_get_char_at(t_circular_buffer *cbuffer, int i);
+void cbuffer_set_char_at(t_circular_buffer *cbuffer,
+                         int i,
+                         char c);
 void    cbuffer_copy(t_circular_buffer *cbuffer,
                      char *buff,
                      int buff_size);
@@ -166,8 +169,19 @@ on_privmsg_command(t_irc_server *irc_server,
                    t_irc_client *irc_client,
                    t_packet *packet);
 
+char
+on_user_command(t_irc_server *irc_server,
+                t_irc_client *irc_client,
+                t_packet *packet);
+
+char
+on_quit_command(t_irc_server *irc_server,
+                t_irc_client *irc_client,
+                t_packet *packet);
+
 // packet_parser.c
 char simple_space_parser(t_packet *packet);
+char content_with_spaces_parser(t_packet *packet);
 char *strdup_irc_packet(char *buffer);
 
 // packet.c
@@ -176,6 +190,7 @@ void free_packet(t_packet *packet);
 char parse_irc_packet(t_irc_server *irc_server,
                       t_irc_client *irc_client,
                       t_packet *packet);
+char buffer_rm_crlf(char *buffer);
 char send_reply_packet(int fd, int code, char *buffer);
 
 // error.c

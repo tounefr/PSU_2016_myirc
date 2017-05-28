@@ -41,6 +41,13 @@ char cbuffer_get_char_at(t_circular_buffer *cbuffer, int i)
     return cbuffer->buffer[i % cbuffer->size];
 }
 
+void cbuffer_set_char_at(t_circular_buffer *cbuffer,
+                         int i,
+                         char c)
+{
+    cbuffer->buffer[i % cbuffer->size] = c;
+}
+
 void    cbuffer_copy(t_circular_buffer *cbuffer,
                      char *buff,
                      int buff_size)
@@ -75,6 +82,7 @@ char        *cbuffer_extract(t_circular_buffer *cbuffer,
     end = cur + cbuffer->size;
     while (cur < end - 1) {
         packet[packet_i++] = cbuffer_get_char_at(cbuffer, cur);
+        cbuffer_set_char_at(cbuffer, packet_i - 1, '\0');
         if (packet_i >= 2 &&
             (packet[packet_i - 2] == '\r' &&
              packet[packet_i - 1] == '\n')) {

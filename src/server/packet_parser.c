@@ -11,28 +11,58 @@
 #include <stdlib.h>
 #include "myirc.h"
 
-char *packet_get_param(char *packet) {
+char *packet_get_param(char *packet)
+{
     strtok(packet, " ");
 }
 
-char        simple_space_parser(t_packet *packet) {
+char        simple_space_parser(t_packet *packet)
+{
     char    *token;
     int     i;
     char    *buffer;
 
     buffer = strdup_irc_packet(packet->raw);
+    buffer_rm_crlf(buffer);
     packet->content = NULL;
     i = -1;
     while ((token = strtok(buffer, " "))) {
         buffer = NULL;
         if (++i == 0)
             packet->cmd = token;
-        else
+        else {
             packet->params[i - 1] = token;
-        packet->nbr_params++;
+            packet->nbr_params++;
+        }
     }
-    while (++i < IRC_PACKET_NBR_PARAMS)
-        packet->params[i] = NULL;
+    free(buffer);
+    return 1;
+}
+
+char        content_with_spaces_parser(t_packet *packet)
+{
+    char    *token;
+    int     i;
+    char    *buffer;
+
+    buffer = strdup_irc_packet(packet->raw);
+    buffer_rm_crlf(buffer);
+    i = -1;
+    while ((token = strtok(buffer, " "))) {
+        buffer = NULL;
+        if (++i == 0)
+            packet->cmd = token;
+        else {
+            if (token[0] == ':') {
+                packet->content = token;
+                break;
+            }
+            else {
+                packet->params[i - 1] = token;
+                packet->nbr_params++;
+            }
+        }
+    }
     free(buffer);
     return 1;
 }
