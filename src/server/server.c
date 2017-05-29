@@ -12,7 +12,8 @@
 #include <unistd.h>
 #include "myirc.h"
 
-char        init_irc_server(t_irc_server *irc_server)
+char
+init_irc_server(t_irc_server *irc_server)
 {
     if (!socket_init(&irc_server->fd_server))
         return 0;
@@ -20,11 +21,13 @@ char        init_irc_server(t_irc_server *irc_server)
                        irc_server->listen_address,
                        &irc_server->listen_port))
         return 0;
+    irc_server->channels = NULL;
     irc_server->irc_clients = NULL;
     return 1;
 }
 
-char    on_server_new_client(t_irc_server *irc_server)
+char
+on_server_new_client(t_irc_server *irc_server)
 {
     int fd_new_client;
 
@@ -35,34 +38,20 @@ char    on_server_new_client(t_irc_server *irc_server)
     return 1;
 }
 
-char                on_exit_client(t_irc_server *irc_server,
-                                   t_irc_client *irc_client)
+char
+on_exit_client(t_irc_server *irc_server,
+               t_irc_client *irc_client)
 {
-    t_irc_client    *cur;
-    t_irc_client    *prev;
-    t_irc_client    *next;
-
-    cur = irc_server->irc_clients;
-    prev = NULL;
-    while (cur) {
-        next = cur->next;
-        if (cur == irc_client) {
-            if (prev)
-                prev->next = cur->next;
-            else
-                irc_server->irc_clients = NULL;
-            break;
-        }
-        prev = cur;
-        cur = next;
-    }
+    //TODO:
+    /*
     socket_close(&irc_client->fd);
     free(irc_client);
     return 1;
+     */
 }
 
-char            on_client_data(t_irc_server *irc_server,
-                           t_irc_client *irc_client)
+char on_client_data(t_irc_server *irc_server,
+                    t_irc_client *irc_client)
 {
     char        buffer[BUFFER_SIZE];
     int         readv;
@@ -88,27 +77,28 @@ char            on_client_data(t_irc_server *irc_server,
     return 1;
 }
 
-char                server_select_on_data(t_server_select *ss,
-                                          t_irc_server *irc_server)
+char server_select_on_data(t_server_select *ss,
+                           t_irc_server *irc_server)
 {
     t_irc_client    *client;
+    t_clients_list  *clients;
     t_irc_client    *next;
 
     if (FD_ISSET(irc_server->fd_server, &ss->readfds)) {
         if (!on_server_new_client(irc_server))
             return 0;
     }
-    client = irc_server->irc_clients;
-    while (client) {
-        next = client->next;
+    clients = irc_server->irc_clients;
+    while ((client = generic_list_foreach(clients))) {
+        clients = NULL;
         if (FD_ISSET(client->fd, &ss->readfds))
             on_client_data(irc_server, client);
-        client = next;
     }
     return 1;
 }
 
-char                start_irc_server(t_irc_server *irc_server)
+char
+start_irc_server(t_irc_server *irc_server)
 {
     t_server_select ss;
     int             retrv;

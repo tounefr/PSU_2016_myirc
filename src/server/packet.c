@@ -18,6 +18,7 @@ t_packet
     int i;
 
     packet = my_malloc(sizeof(t_packet));
+    packet->prefix = NULL;
     packet->raw = raw;
     i = -1;
     while (++i < IRC_PACKET_NBR_PARAMS)
@@ -81,22 +82,17 @@ parse_irc_packet(t_irc_server *irc_server,
 void
 packet_set(t_packet *packet, char *cmd, char *content)
 {
-    if (cmd) {
-        packet->cmd = strdup(cmd);
-        if (!packet->cmd)
-            malloc_error();
-    }
-    if (content) {
-        packet->content = strdup(content);
-        if (!packet->content)
-            malloc_error();
-    }
+    packet->prefix = my_strdup(IRC_SERVER_ORIGIN);
+    if (cmd)
+        packet->cmd = my_strdup(cmd);
+    if (content)
+        packet->content = my_strdup(content);
 }
 
 void
 packet_set_param(t_packet *packet, int i, char *param)
 {
-    packet->params[i] = strdup(param);
+    packet->params[i] = my_strdup(param);
     if (!packet->params[i])
         malloc_error();
 }

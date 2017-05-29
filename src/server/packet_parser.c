@@ -33,7 +33,7 @@ simple_space_parser(t_packet *packet)
         if (++i == 0)
             packet->cmd = token;
         else {
-            packet->params[i - 1] = token;
+            packet->params[i - 1] = my_strdup(token);
             packet->nbr_params++;
         }
     }
@@ -57,12 +57,11 @@ content_with_spaces_parser(t_packet *packet)
             packet->cmd = token;
         else {
             if (token[0] == ':') {
-                if (!(packet->content = strdup(&token[1])))
-                    malloc_error();
+                packet->content = my_strdup(&token[1]);
                 break;
             }
             else {
-                packet->params[i - 1] = token;
+                packet->params[i - 1] = my_strdup(token);
                 packet->nbr_params++;
             }
         }

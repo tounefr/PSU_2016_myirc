@@ -72,10 +72,3 @@ generic_list_remove(t_generic_list **list,
     }
     return 0;
 }
-
-void*
-generic_list_get_at(t_generic_list *list,
-                    int i)
-{
-
-}

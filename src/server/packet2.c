@@ -56,6 +56,10 @@ send_reply_packet(int fd, t_packet *res)
     memset(&buffer, 0, IRC_PACKET_SIZE + 1);
     i = -1;
     i2 = 0;
+    if (res->prefix) {
+        buffer[i2++] = ':';
+        cpy_buff(buffer, &i2, res->prefix, FLAG_APPND_SPACE);
+    }
     cpy_buff(buffer, &i2, res->cmd, FLAG_APPND_SPACE);
     while (++i < IRC_PACKET_NBR_PARAMS && res->params[i])
         cpy_buff(buffer, &i2, res->params[i], FLAG_APPND_SPACE);
@@ -63,5 +67,19 @@ send_reply_packet(int fd, t_packet *res)
         cpy_buff(buffer, &i2, res->content, FLAG_APPND_COMMA);
     cpy_buff(buffer, &i2, "\r\n", FLAG_NONE);
     free_packet(res);
+    printf("Send >> %s\n", buffer);
     return socket_send(&fd, buffer);
+}
+
+void
+packet_set_params(t_packet *packet, int nbr_params, ...)
+{
+    int i;
+    va_list args;
+
+    va_start(args, nbr_params);
+    i = -1;
+    while (++i < nbr_params)
+        packet->params[i] = va_arg(args, char*);
+    va_end(args);
 }

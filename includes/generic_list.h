@@ -26,6 +26,8 @@ char
 generic_list_remove(t_generic_list **list,
                     void *elem);
 void*
+generic_list_foreach(t_generic_list *list);
+void*
 generic_list_get_at(t_generic_list *list,
                     int i);
 

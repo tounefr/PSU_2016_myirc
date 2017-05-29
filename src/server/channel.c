@@ -12,48 +12,55 @@
 #include "myirc.h"
 #include "util.h"
 
-static void
-append_channel_in_list(t_irc_server *irc_server,
-                       t_irc_channel *irc_channel)
-{
-    t_irc_channel *channels;
-
-    channels = irc_server->channels;
-    if (!channels) {
-        irc_server->channels = irc_channel;
-    } else {
-        while (channels->next)
-            channels = channels->next;
-        channels->next = irc_channel;
-    }
-}
-
 t_irc_channel*
 new_irc_channel(t_irc_server *irc_server, char *name)
 {
     t_irc_channel *irc_channel;
 
     irc_channel = my_malloc(sizeof(t_irc_channel));
-    if (!(irc_channel->name = strdup(name)))
-        malloc_error();
+    irc_channel->name = my_strdup(name);
     irc_channel->max_clients = IRC_CHANNEL_MAX_CLIENTS;
     irc_channel->clients = NULL;
     irc_channel->op = NULL;
-    irc_channel->next = NULL;
-    append_channel_in_list(irc_server, irc_channel);
+    irc_channel->topic = my_strdup("Mon super topic");
+    generic_list_append(&irc_server->channels, irc_channel);
     return irc_channel;
+}
+
+char*
+normalize_channel_name(char *channel)
+{
+    int i;
+
+    if (!channel)
+        return NULL;
+    if (channel[0] == '&' || channel[0] == '#')
+        channel++;
+    if (strlen(channel) > 200)
+        EXIT_ERROR(NULL, "channel name > 200\n")
+    i = -1;
+    while (channel[++i]) {
+        if (channel[i] < 0 || channel[i] > 255 ||
+            channel[i] == 7 || channel[i] == ' ')
+            EXIT_ERROR(NULL, "wrong channel name\n")
+    }
+    channel = my_strdup(channel);
+    return channel;
 }
 
 t_irc_channel*
 irc_channel_exists(t_irc_server *irc_server, char *name)
 {
-    t_irc_channel *channels;
+    t_channels_list *channels;
+    t_irc_channel *channel;
 
+    if (!name)
+        return NULL;
     channels = irc_server->channels;
-    while (channels) {
-        if (channels->name && !strcmp(channels->name, name))
-            return channels;
-        channels = channels->next;
+    while ((channel = generic_list_foreach(channels))) {
+        channels = NULL;
+        if (channel->name && !strcmp(channel->name, name))
+            return channel;
     }
     return NULL;
 }
@@ -61,28 +68,25 @@ irc_channel_exists(t_irc_server *irc_server, char *name)
 char
 client_join_channel(t_irc_client *client, t_irc_channel *channel)
 {
-    t_irc_client *clients;
-
-    clients = channel->clients;
-    if (!clients) {
-
-    } else {
-        while (clients->next)
-            clients = clients->next;
-        clients->next = client;
+    if (client_is_in_channel(channel, client)) {
+        printf("client already in channel\n");
+        return 0;
     }
+    generic_list_append(&channel->clients, client);
+    return 1;
 }
 
 char
-client_is_in_channel(t_irc_channel *channel, t_irc_client *client)
+client_is_in_channel(t_irc_channel *channel, t_irc_client *to_find)
 {
-    t_irc_client *clients;
+    t_irc_client *client;
+    t_clients_list *clients;
 
     clients = channel->clients;
-    while (clients) {
-        if (clients == client)
+    while ((client = generic_list_foreach(clients))) {
+        clients = NULL;
+        if (client == to_find)
             return 1;
-        clients = clients->next;
     }
     return 0;
 }
@@ -90,13 +94,5 @@ client_is_in_channel(t_irc_channel *channel, t_irc_client *client)
 char
 client_leave_channel(t_irc_client *client, t_irc_channel *channel)
 {
-
-}
-
-void
-free_irc_channel(t_irc_channel *irc_channel)
-{
-    if (irc_channel->name)
-        free(irc_channel->name);
-    free(irc_channel);
+    generic_list_remove(&channel->clients, client);
 }

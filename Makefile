@@ -20,7 +20,9 @@ SERVER_SRCS =   src/common/my_select.c \
                 src/common/util.c \
                 src/common/error.c \
                 src/common/generic_list.c \
+                src/common/generic_list2.c \
                 src/server/cbuffer.c \
+                src/server/cbuffer2.c \
                 src/server/client.c \
                 src/server/commands.c \
                 src/server/main.c \
@@ -30,7 +32,8 @@ SERVER_SRCS =   src/common/my_select.c \
                 src/server/packet2.c \
                 src/server/server_commands.c \
                 src/server/channel_commands.c \
-                src/server/channel.c
+                src/server/channel.c \
+                src/server/channel2.c \
 
 SERVER_OBJS = $(SERVER_SRCS:.c=.o)
 

@@ -23,6 +23,7 @@
 #include <sys/select.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <stdarg.h>
 
 #include "util.h"
 #include "socket.h"
@@ -36,6 +37,7 @@
 # define IRC_SERVER_MAX_CHANNELS 100
 # define IRC_PACKET_NBR_PARAMS 15
 # define IRC_CHANNEL_MAX_CLIENTS 100
+# define IRC_SERVER_ORIGIN "myirc"
 
 typedef struct s_circular_buffer
 {
@@ -58,9 +60,11 @@ typedef struct      s_server_select
 typedef t_generic_list t_channels_list;
 typedef t_generic_list t_clients_list;
 
+typedef struct s_irc_client t_irc_client;
 typedef struct      s_irc_channel
 {
     char            *name;
+    char            *topic;
     int             max_clients;
     t_clients_list  *clients;
     t_irc_client    *op;
@@ -69,6 +73,7 @@ typedef struct      s_irc_channel
 typedef struct          s_irc_client
 {
     char                *pseudo;
+    char                *realname;
     int                 fd;
     t_circular_buffer   *cbuffer;
     t_channels_list     *registred_channels;
@@ -86,6 +91,7 @@ typedef struct      s_irc_server
 typedef struct s_packet
 {
     char        *raw;
+    char        *prefix;
     char        *cmd;
     int         nbr_params;
     int         code;
@@ -195,6 +201,7 @@ char parse_irc_packet(t_irc_server *irc_server,
                       t_packet *packet);
 void packet_set(t_packet *packet, char *cmd, char *content);
 void packet_set_param(t_packet *packet, int i, char *param);
+void packet_set_params(t_packet *packet, int nbr_params, ...);
 char buffer_rm_crlf(char *buffer);
 char send_reply_packet(int fd, t_packet *res);
 
@@ -204,8 +211,10 @@ void malloc_error();
 
 // channel.c
 t_irc_channel *new_irc_channel(t_irc_server *irc_server, char *name);
+char* normalize_channel_name(char *channel);
 t_irc_channel *irc_channel_exists(t_irc_server *irc_server, char *name);
 char client_join_channel(t_irc_client *client, t_irc_channel *channel);
+char client_is_in_channel(t_irc_channel *channel, t_irc_client *to_find);
 char client_leave_channel(t_irc_client *client, t_irc_channel *channel);
 void free_irc_channel(t_irc_channel *irc_channel);
 

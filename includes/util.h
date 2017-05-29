@@ -16,10 +16,15 @@
 #include <assert.h>
 #include <string.h>
 
+// error.c
+char exit_error(int returnv);
+void malloc_error();
+
 // util.c
 char is_number(char *str);
 void *my_malloc(size_t size);
 int nbr_chars_in_str(char *str, char c);
+char  *my_strdup(char *str);
 
 #define EXIT_ERROR(returnv, ...) {fprintf(stderr, __VA_ARGS__); return returnv;}
 

@@ -49,3 +49,9 @@ int     nbr_chars_in_str(char *str, char c) {
     }
     return n;
 }
+
+char    *my_strdup(char *str) {
+    if (!(str = strdup(str)))
+        malloc_error();
+    return str;
+}

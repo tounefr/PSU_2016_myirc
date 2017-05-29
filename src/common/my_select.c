@@ -10,8 +10,9 @@
 
 #include "myirc.h"
 
-static void init_server_select(t_server_select *server_select,
-                        int server_fd)
+static void
+init_server_select(t_server_select *server_select,
+                   int server_fd)
 {
     server_select->timeout.tv_sec = 0;
     server_select->timeout.tv_usec = 5000;
@@ -22,8 +23,9 @@ static void init_server_select(t_server_select *server_select,
     FD_ZERO(&server_select->writefds);
 }
 
-static void add_readfd_server_select(t_server_select *server_select,
-                              int fd)
+static void
+add_readfd_server_select(t_server_select *server_select,
+                         int fd)
 {
     FD_SET(fd, &server_select->readfds);
     if (fd > server_select->nfds)
@@ -31,36 +33,43 @@ static void add_readfd_server_select(t_server_select *server_select,
     server_select->readfds_n++;
 }
 
-static int                 get_highest_read_fd(t_irc_server *irc_server)
+static int
+get_highest_read_fd(t_irc_server *irc_server)
 {
-    int             fd;
-    t_irc_client    *clients;
+    int fd;
+    t_clients_list *clients;
+    t_irc_client *client;
 
     clients = irc_server->irc_clients;
     fd = -1;
-    while (clients) {
-        if (clients->fd > fd)
-            fd = clients->fd;
-        clients = clients->next;
+    while ((client = generic_list_foreach(clients))) {
+        clients = NULL;
+        if (client->fd > fd)
+            fd = client->fd;
     }
     if (irc_server->fd_server > fd)
         fd = irc_server->fd_server;
     return fd;
 }
 
-static void add_readfd_clients(t_server_select *server_select,
-                        t_irc_client *clients)
+static void
+add_readfd_clients(t_server_select *server_select,
+                   t_clients_list *clients)
 {
-    while (clients) {
-        if (clients->fd > server_select->nfds - 1)
-            server_select->nfds = clients->fd + 1;
-        FD_SET(clients->fd, &server_select->readfds);
+    t_irc_client *client;
+
+    while ((client = generic_list_foreach(clients))) {
+        clients = NULL;
+        if (client->fd > server_select->nfds - 1)
+            server_select->nfds = client->fd + 1;
+        FD_SET(client->fd, &server_select->readfds);
         server_select->readfds_n++;
-        clients = clients->next;
     }
 }
 
-int my_select(t_server_select *ss, t_irc_server *irc_server)
+int
+my_select(t_server_select *ss,
+          t_irc_server *irc_server)
 {
     init_server_select(ss, irc_server->fd_server);
     add_readfd_server_select(ss, irc_server->fd_server);

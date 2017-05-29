@@ -26,6 +26,7 @@ on_nick_command(t_irc_server *irc_server,
         send_reply_packet(irc_client->fd, res);
         return 0;
     }
+    printf("%d\n", packet->nbr_params);
     pseudo = packet->params[0];
     if (check_pseudo_already_used(irc_server, pseudo)) {
         printf("pseudo already used\n");
@@ -37,8 +38,7 @@ on_nick_command(t_irc_server *irc_server,
     }
     if (irc_client->pseudo)
         free(irc_client->pseudo);
-    if (!(irc_client->pseudo = strdup(packet->params[0])))
-        malloc_error();
+    irc_client->pseudo = my_strdup(packet->params[0]);
     return 1;
 }
 
@@ -65,10 +65,19 @@ on_user_command(t_irc_server *irc_server,
         send_reply_packet(irc_client->fd, res);
         return 1;
     }
+    irc_client->realname = my_strdup(packet->content);
+
     res = init_packet(NULL);
-    packet_set(res, "001", NULL);
-    packet_set_param(res, 0, "Hello from TouneIRC!");
+    packet_set(res, "MODE", "+i");
+    packet_set_params(res, 1, irc_client->pseudo);
     send_reply_packet(irc_client->fd, res);
+
+//    socket_send(&irc_client->fd, ":tounefr_ MODE tounefr_ :+i\r\n");
+
+    /*res = init_packet(NULL);
+    packet_set(res, "001", "Hello from TouneIRC!");
+    packet_set_param(res, 0, irc_client->pseudo);
+    send_reply_packet(irc_client->fd, res);*/
     return 1;
 }
 
