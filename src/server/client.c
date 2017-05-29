@@ -37,3 +37,17 @@ void                new_irc_client(t_irc_server *irc_server,
     }
 }
 
+char
+check_pseudo_already_used(t_irc_server *irc_server,
+                          char *pseudo)
+{
+    t_irc_client    *clients;
+
+    clients = irc_server->irc_clients;
+    while (clients) {
+        if (clients->pseudo && !strcmp(clients->pseudo, pseudo))
+            return 1;
+        clients = clients->next;
+    }
+    return 0;
+}

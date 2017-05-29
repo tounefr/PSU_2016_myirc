@@ -11,7 +11,9 @@
 #include <stdlib.h>
 #include "myirc.h"
 
-t_packet *init_packet(char *raw) {
+t_packet
+*init_packet(char *raw)
+{
     t_packet *packet;
     int i;
 
@@ -21,14 +23,18 @@ t_packet *init_packet(char *raw) {
     while (++i < IRC_PACKET_NBR_PARAMS)
         packet->params[i] = NULL;
     packet->content = NULL;
+    packet->code = -1;
     packet->nbr_params = 0;
     return packet;
 }
 
-void free_packet(t_packet *packet) {
+void
+free_packet(t_packet *packet)
+{
     int i;
 
-    free(packet->cmd);
+    if (packet->cmd)
+        free(packet->cmd);
     i = -1;
     while (++i < IRC_PACKET_NBR_PARAMS) {
         if (packet->params[i]) {
@@ -38,18 +44,19 @@ void free_packet(t_packet *packet) {
     }
     if (packet->content)
         free(packet->content);
-    if (packet->raw)
-        free(packet->raw);
+    /*if (packet->raw)
+        free(packet->raw);*/
 
 }
 
-char parse_irc_packet(t_irc_server *irc_server,
-                      t_irc_client *irc_client,
-                      t_packet *packet)
+char
+parse_irc_packet(t_irc_server *irc_server,
+                 t_irc_client *irc_client,
+                 t_packet *packet)
 {
-    int             i;
-    char            *token;
-    char            *buffer_tmp;
+    int i;
+    char *token;
+    char *buffer_tmp;
 
     buffer_tmp = strdup_irc_packet(packet->raw);
     while ((token = strtok(buffer_tmp, " "))) {
@@ -71,21 +78,25 @@ char parse_irc_packet(t_irc_server *irc_server,
     EXIT_ERROR(0, "Unknown packet\n")
 }
 
-char    buffer_rm_crlf(char *buffer) {
-    int i;
-
-    i = 0;
-    while (buffer[i]) {
-        if (buffer[i] == '\r' && buffer[i + 1] == '\n') {
-            buffer[i] = '\0';
-            buffer[i + 1] = '\0';
-            return 1;
-        }
-        i++;
+void
+packet_set(t_packet *packet, char *cmd, char *content)
+{
+    if (cmd) {
+        packet->cmd = strdup(cmd);
+        if (!packet->cmd)
+            malloc_error();
     }
-    return 0;
+    if (content) {
+        packet->content = strdup(content);
+        if (!packet->content)
+            malloc_error();
+    }
 }
 
-char send_reply_packet(int fd, int code, char *buffer) {
-
+void
+packet_set_param(t_packet *packet, int i, char *param)
+{
+    packet->params[i] = strdup(param);
+    if (!packet->params[i])
+        malloc_error();
 }

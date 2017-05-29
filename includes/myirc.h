@@ -27,6 +27,7 @@
 #include "util.h"
 #include "socket.h"
 #include "socket_server.h"
+#include "generic_list.h"
 
 # define LISTEN_ADDRESS "0.0.0.0"
 # define BUFFER_SIZE 512
@@ -54,12 +55,14 @@ typedef struct      s_server_select
     fd_set          exceptfds;
 } t_server_select;
 
-typedef struct s_irc_client t_irc_client;
+typedef t_generic_list t_channels_list;
+typedef t_generic_list t_clients_list;
+
 typedef struct      s_irc_channel
 {
     char            *name;
     int             max_clients;
-    t_irc_client    *clients;
+    t_clients_list  *clients;
     t_irc_client    *op;
 } t_irc_channel;
 
@@ -68,8 +71,7 @@ typedef struct          s_irc_client
     char                *pseudo;
     int                 fd;
     t_circular_buffer   *cbuffer;
-    t_irc_channel       *registred_channels;
-    struct s_irc_client *next;
+    t_channels_list     *registred_channels;
 } t_irc_client;
 
 typedef struct      s_irc_server
@@ -77,8 +79,8 @@ typedef struct      s_irc_server
     int             fd_server;
     char            *listen_address;
     unsigned short  listen_port;
-    t_irc_channel   *channels;
-    t_irc_client    *irc_clients;
+    t_channels_list *channels;
+    t_clients_list  *irc_clients;
 } t_irc_server;
 
 typedef struct s_packet
@@ -86,6 +88,7 @@ typedef struct s_packet
     char        *raw;
     char        *cmd;
     int         nbr_params;
+    int         code;
     char        *params[IRC_PACKET_NBR_PARAMS];
     char        *content;
 } t_packet;
@@ -190,12 +193,21 @@ void free_packet(t_packet *packet);
 char parse_irc_packet(t_irc_server *irc_server,
                       t_irc_client *irc_client,
                       t_packet *packet);
+void packet_set(t_packet *packet, char *cmd, char *content);
+void packet_set_param(t_packet *packet, int i, char *param);
 char buffer_rm_crlf(char *buffer);
-char send_reply_packet(int fd, int code, char *buffer);
+char send_reply_packet(int fd, t_packet *res);
 
 // error.c
 char exit_error(int returnv);
 void malloc_error();
+
+// channel.c
+t_irc_channel *new_irc_channel(t_irc_server *irc_server, char *name);
+t_irc_channel *irc_channel_exists(t_irc_server *irc_server, char *name);
+char client_join_channel(t_irc_client *client, t_irc_channel *channel);
+char client_leave_channel(t_irc_client *client, t_irc_channel *channel);
+void free_irc_channel(t_irc_channel *irc_channel);
 
 // channel_commands.c
 char check_pseudo_already_used(t_irc_server *irc_server, char *pseudo);

@@ -19,6 +19,7 @@ SERVER_SRCS =   src/common/my_select.c \
                 src/common/network/socket_server.c \
                 src/common/util.c \
                 src/common/error.c \
+                src/common/generic_list.c \
                 src/server/cbuffer.c \
                 src/server/client.c \
                 src/server/commands.c \
@@ -26,6 +27,7 @@ SERVER_SRCS =   src/common/my_select.c \
                 src/server/server.c \
                 src/server/packet_parser.c \
                 src/server/packet.c \
+                src/server/packet2.c \
                 src/server/server_commands.c \
                 src/server/channel_commands.c \
                 src/server/channel.c

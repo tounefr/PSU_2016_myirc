@@ -11,16 +11,18 @@
 #include <stdlib.h>
 #include "myirc.h"
 
-char *packet_get_param(char *packet)
+char
+*packet_get_param(char *packet)
 {
     strtok(packet, " ");
 }
 
-char        simple_space_parser(t_packet *packet)
+char
+simple_space_parser(t_packet *packet)
 {
-    char    *token;
-    int     i;
-    char    *buffer;
+    char *token;
+    int i;
+    char *buffer;
 
     buffer = strdup_irc_packet(packet->raw);
     buffer_rm_crlf(buffer);
@@ -39,11 +41,12 @@ char        simple_space_parser(t_packet *packet)
     return 1;
 }
 
-char        content_with_spaces_parser(t_packet *packet)
+char
+content_with_spaces_parser(t_packet *packet)
 {
-    char    *token;
-    int     i;
-    char    *buffer;
+    char *token;
+    int i;
+    char *buffer;
 
     buffer = strdup_irc_packet(packet->raw);
     buffer_rm_crlf(buffer);
@@ -54,7 +57,8 @@ char        content_with_spaces_parser(t_packet *packet)
             packet->cmd = token;
         else {
             if (token[0] == ':') {
-                packet->content = token;
+                if (!(packet->content = strdup(&token[1])))
+                    malloc_error();
                 break;
             }
             else {
@@ -67,8 +71,10 @@ char        content_with_spaces_parser(t_packet *packet)
     return 1;
 }
 
-char        *strdup_irc_packet(char *buffer) {
-    char    *new_buffer;
+char
+*strdup_irc_packet(char *buffer)
+{
+    char *new_buffer;
 
     new_buffer = my_malloc(IRC_PACKET_SIZE);
     memcpy(new_buffer, buffer, IRC_PACKET_SIZE);
