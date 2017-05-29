@@ -45,9 +45,6 @@ free_packet(t_packet *packet)
     }
     if (packet->content)
         free(packet->content);
-    /*if (packet->raw)
-        free(packet->raw);*/
-
 }
 
 char
@@ -77,22 +74,4 @@ parse_irc_packet(t_irc_server *irc_server,
     }
     free(buffer_tmp);
     EXIT_ERROR(0, "Unknown packet\n")
-}
-
-void
-packet_set(t_packet *packet, char *cmd, char *content)
-{
-    packet->prefix = my_strdup(IRC_SERVER_ORIGIN);
-    if (cmd)
-        packet->cmd = my_strdup(cmd);
-    if (content)
-        packet->content = my_strdup(content);
-}
-
-void
-packet_set_param(t_packet *packet, int i, char *param)
-{
-    packet->params[i] = my_strdup(param);
-    if (!packet->params[i])
-        malloc_error();
 }

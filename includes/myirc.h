@@ -37,7 +37,6 @@
 # define IRC_SERVER_MAX_CHANNELS 100
 # define IRC_PACKET_NBR_PARAMS 15
 # define IRC_CHANNEL_MAX_CLIENTS 100
-# define IRC_SERVER_ORIGIN "myirc"
 
 typedef struct s_circular_buffer
 {

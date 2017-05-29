@@ -66,17 +66,6 @@ irc_channel_exists(t_irc_server *irc_server, char *name)
 }
 
 char
-client_join_channel(t_irc_client *client, t_irc_channel *channel)
-{
-    if (client_is_in_channel(channel, client)) {
-        printf("client already in channel\n");
-        return 0;
-    }
-    generic_list_append(&channel->clients, client);
-    return 1;
-}
-
-char
 client_is_in_channel(t_irc_channel *channel, t_irc_client *to_find)
 {
     t_irc_client *client;
