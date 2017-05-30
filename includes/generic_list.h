@@ -35,4 +35,8 @@ generic_list_get_at(t_generic_list *list,
 int
 generic_list_count(t_generic_list *list);
 
+void
+generic_list_destory(t_generic_list **list,
+                     char (*rm_func)(void *));
+
 #endif //PROJETS_GENERIC_LIST_H

@@ -49,17 +49,16 @@ on_exit_client(t_irc_server *irc_server,
     while ((channel = generic_list_foreach(channels_list))) {
         channels_list = NULL;
         announce_channel_client_part(irc_client, channel);
-        generic_list_remove(&channel->clients, irc_client);
-        /*if (generic_list_count(channel->clients) == 0)
-            free_irc_channel(irc_server, channel);*/
+        generic_list_remove(&channel->clients, irc_client, free_irc_client);
     }
-    generic_list_remove(&irc_server->irc_clients, irc_client);
+    generic_list_remove(&irc_server->irc_clients, irc_client, free_irc_client);
     socket_close(&irc_client->fd);
     return 1;
 }
 
-char on_client_data(t_irc_server *irc_server,
-                    t_irc_client *irc_client)
+char
+on_client_data(t_irc_server *irc_server,
+               t_irc_client *irc_client)
 {
     char        buffer[BUFFER_SIZE];
     int         readv;
@@ -75,18 +74,19 @@ char on_client_data(t_irc_server *irc_server,
     cbuffer_copy(irc_client->cbuffer, buffer, readv);
     //EXIT_ERROR(0, "cbuffer_extract failed\n")
     while ((raw = cbuffer_extract(irc_client->cbuffer,
-                                   IRC_PACKET_SIZE,
-                                   "\r\n"))) {
+                                  IRC_PACKET_SIZE,
+                                  "\r\n"))) {
         packet = init_packet(raw);
         printf("Recv << %s", raw);
         returnv = parse_irc_packet(irc_server, irc_client, packet);
-        //free_packet(packet);
+        free_packet(packet);
     }
     return 1;
 }
 
-char server_select_on_data(t_server_select *ss,
-                           t_irc_server *irc_server)
+char
+server_select_on_data(t_server_select *ss,
+                      t_irc_server *irc_server)
 {
     t_irc_client    *client;
     t_clients_list  *clients;
@@ -116,9 +116,9 @@ start_irc_server(t_irc_server *irc_server)
     while (1) {
         retrv = my_select(&ss, irc_server);
         if (retrv == 0) {
-            printf("There is %d clients connected and %d channels\n",
+            /*printf("There is %d clients connected and %d channels\n",
                    generic_list_count(irc_server->irc_clients),
-                   generic_list_count(irc_server->channels));
+                   generic_list_count(irc_server->channels));*/
         }
         else if (retrv == -1) {
             printf("select error : %s\n", strerror(errno));

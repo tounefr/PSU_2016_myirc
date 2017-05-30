@@ -5,7 +5,8 @@
 #include "generic_list.h"
 
 static char
-generic_list_new(t_generic_list **list, void *data)
+generic_list_new(t_generic_list **list,
+                 void *data)
 {
     *list = my_malloc(sizeof(t_generic_list));
     (*list)->data = data;
@@ -56,6 +57,8 @@ generic_list_remove(t_generic_list **list,
     t_generic_list *cur;
     t_generic_list *prev;
 
+    if (!list || !*list)
+        return 0;
     cur = *list;
     prev = NULL;
     while (cur) {

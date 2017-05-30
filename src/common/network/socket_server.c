@@ -12,7 +12,9 @@
 #include <sys/socket.h>
 #include "util.h"
 
-char                    socket_accept(int *server_socket, int *client_socket)
+char
+socket_accept(int *server_socket,
+              int *client_socket)
 {
     struct sockaddr_in  sin;
     socklen_t           sinsize;
@@ -24,9 +26,9 @@ char                    socket_accept(int *server_socket, int *client_socket)
     return 1;
 }
 
-char                    socket_listen(int *server_fd,
-                                      char *listen_address,
-                                      unsigned short *listen_port)
+char socket_listen(int *server_fd,
+                   char *listen_address,
+                   unsigned short *listen_port)
 {
     struct sockaddr_in  sockaddr;
     int                 option;

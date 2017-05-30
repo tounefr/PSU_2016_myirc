@@ -1,4 +1,5 @@
 
+#include <stdlib.h>
 #include "generic_list.h"
 
 void*
@@ -37,15 +38,20 @@ generic_list_count(t_generic_list *list)
     return c;
 }
 
-/*
 void
-generic_list_destory(t_generic_list *list)
+generic_list_destory(t_generic_list **list,
+                     char (*rm_func)(void *))
 {
     void *elem;
+    t_generic_list *tmp;
 
-    while ((elem = generic_list_foreach(list))) {
-        list = NULL;
-        generic_list_remove(&list, elem);
+    if (!list || !*list)
+        return;
+    tmp = *list;
+    while ((elem = generic_list_foreach(tmp))) {
+        tmp = NULL;
+        generic_list_remove(list, elem, rm_func);
     }
-    return 1;
-}*/
+    free(*list);
+    *list = NULL;
+}

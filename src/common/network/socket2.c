@@ -13,7 +13,8 @@
 #include "socket.h"
 #include "socket_server.h"
 
-char    socket_port_used(unsigned short port)
+char
+socket_port_used(unsigned short port)
 {
     int fd;
 

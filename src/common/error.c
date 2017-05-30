@@ -11,13 +11,15 @@
 #include <stdlib.h>
 #include "myirc.h"
 
-char exit_error(int returnv)
+char
+exit_error(int returnv)
 {
     printf("%s\n", strerror(errno));
     return returnv;
 }
 
-void malloc_error() {
+void
+malloc_error() {
     fprintf(stderr, "malloc error\n");
     exit(1);
 }

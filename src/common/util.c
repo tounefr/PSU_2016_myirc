@@ -14,7 +14,8 @@
 #include <string.h>
 #include "util.h"
 
-char is_number(char *str)
+char
+is_number(char *str)
 {
     if (strlen(str) == 0)
         return 0;
@@ -26,7 +27,8 @@ char is_number(char *str)
     return 1;
 }
 
-void        *my_malloc(size_t size)
+void
+*my_malloc(size_t size)
 {
     void    *ptr;
 
@@ -37,7 +39,10 @@ void        *my_malloc(size_t size)
     return ptr;
 }
 
-int     nbr_chars_in_str(char *str, char c) {
+int
+nbr_chars_in_str(char *str,
+                 char c)
+{
     int i;
     int n;
 
@@ -50,7 +55,9 @@ int     nbr_chars_in_str(char *str, char c) {
     return n;
 }
 
-char    *my_strdup(char *str) {
+char
+*my_strdup(char *str)
+{
     if (!(str = strdup(str)))
         malloc_error();
     return str;

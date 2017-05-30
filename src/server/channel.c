@@ -40,8 +40,7 @@ normalize_channel_name(char *channel)
         EXIT_ERROR(NULL, "channel name > 200\n")
     i = -1;
     while (channel[++i]) {
-        if (channel[i] < 0 || channel[i] > 255 ||
-            channel[i] == 7 || channel[i] == ' ')
+        if (channel[i] == 7 || channel[i] == ' ')
             EXIT_ERROR(NULL, "wrong channel name\n")
     }
     channel = my_strdup(channel);
@@ -78,10 +77,4 @@ client_is_in_channel(t_irc_channel *channel, t_irc_client *to_find)
             return 1;
     }
     return 0;
-}
-
-char
-client_leave_channel(t_irc_client *client, t_irc_channel *channel)
-{
-    generic_list_remove(&channel->clients, client);
 }

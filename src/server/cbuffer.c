@@ -24,6 +24,16 @@ cbuffer_new(int size)
 }
 
 void
+cbuffer_free(t_circular_buffer *cbuffer)
+{
+    if (!cbuffer)
+        return;
+    if (cbuffer->buffer)
+        free(cbuffer->buffer);
+    free(cbuffer);
+}
+
+void
 cbuffer_debug(t_circular_buffer *cbuffer)
 {
     int i;
@@ -47,8 +57,8 @@ cbuffer_get_char_at(t_circular_buffer *cbuffer,
 
 void
 cbuffer_set_char_at(t_circular_buffer *cbuffer,
-                         int i,
-                         char c)
+                    int i,
+                    char c)
 {
     cbuffer->buffer[i % cbuffer->size] = c;
 }

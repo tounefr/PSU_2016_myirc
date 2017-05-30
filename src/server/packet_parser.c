@@ -37,8 +37,10 @@ simple_space_parser(t_packet *packet)
     char *token;
     int i;
     char *buffer;
+    char *tmp;
 
     buffer = strdup_irc_packet(packet->raw);
+    tmp = buffer;
     buffer_rm_crlf(buffer);
     packet->content = NULL;
     i = -1;
@@ -55,7 +57,7 @@ simple_space_parser(t_packet *packet)
             packet->nbr_params++;
         }
     }
-    free(buffer);
+//    free(tmp);
     return 1;
 }
 

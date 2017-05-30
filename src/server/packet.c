@@ -36,6 +36,8 @@ free_packet(t_packet *packet)
 
     if (packet->cmd)
         free(packet->cmd);
+    if (packet->raw)
+        free(packet->raw);
     i = -1;
     while (++i < IRC_PACKET_NBR_PARAMS) {
         if (packet->params[i]) {
@@ -45,6 +47,7 @@ free_packet(t_packet *packet)
     }
     if (packet->content)
         free(packet->content);
+    free(packet);
 }
 
 char
@@ -54,24 +57,26 @@ parse_irc_packet(t_irc_server *irc_server,
 {
     int i;
     char *token;
-    char *buffer_tmp;
+    char *buffer;
+    char *tmp;
+    int returnv;
+    t_command_callback *cmd_call;
 
-    buffer_tmp = strdup_irc_packet(packet->raw);
-    while ((token = strtok(buffer_tmp, " "))) {
-        buffer_tmp = NULL;
+    buffer = strdup_irc_packet(packet->raw);
+    tmp = buffer;
+    while ((token = strtok(buffer, " "))) {
+        buffer = NULL;
         i = -1;
         while (++i < N_COMMAND_CALLBACK) {
-            if (!strcmp(commands_callbacks[i].cmd, token)) {
-                if (!commands_callbacks[i].parser(packet)) {
-                    free(buffer_tmp);
-                    EXIT_ERROR(0, "Failed to parse packet\n")
-                }
-                return commands_callbacks[i].callback(irc_server,
-                                                      irc_client,
-                                                      packet);
+            cmd_call = &commands_callbacks[i];
+            if (!strcmp(cmd_call->cmd, token)) {
+                if (simple_space_parser(packet))
+                    returnv = cmd_call->callback(irc_server, irc_client, packet);
+                break;
             }
         }
     }
-    free(buffer_tmp);
-    EXIT_ERROR(0, "Unknown packet\n")
+    free(tmp);
+    return returnv;
+//    EXIT_ERROR(0, "Unknown packet\n")
 }

@@ -13,17 +13,17 @@
 
 t_command_callback commands_callbacks[N_COMMAND_CALLBACK] =
 {
-        { "JOIN", simple_space_parser, on_join_command }, // /join   1
-        { "LIST", simple_space_parser, on_list_command }, // /list  0, 1, 2
-        { "NICK", simple_space_parser, on_nick_command }, // /nick 0, 1
-        { "PART", simple_space_parser, on_part_command }, // /part 1
-        { "WHO", simple_space_parser, on_who_command }, // /users    0, 1
-        { "NAMES", simple_space_parser, on_names_command }, // /names   0, 1
-        { "PRIVMSG", simple_space_parser, on_privmsg_command }, // /msg ou $msg     1
-        { "USER", simple_space_parser, on_user_command },
-        { "QUIT", simple_space_parser, on_quit_command },
-        { "MODE", simple_space_parser, on_mode_command },
-        { "PING", simple_space_parser, on_ping_command }
+        { "JOIN", on_join_command },
+        { "LIST", on_list_command },
+        { "NICK", on_nick_command },
+        { "PART", on_part_command },
+        { "WHO", on_who_command },
+        { "NAMES", on_names_command },
+        { "PRIVMSG", on_privmsg_command },
+        { "USER", on_user_command },
+        { "QUIT", on_quit_command },
+        { "MODE", on_mode_command },
+        { "PING", on_ping_command }
 };
 
 char
@@ -87,13 +87,10 @@ on_part_command(t_irc_server *irc_server,
         channels = NULL;
         if (!strcmp(channel_name, channel->name)) {
             announce_channel_client_part(irc_client, channel);
-            generic_list_remove(&irc_client->registred_channels, channel);
-            generic_list_remove(&channel->clients, irc_client);
-
-            /*if (generic_list_count(channel->clients) == 0)
-                free_irc_channel(irc_server, channel);*/
-
+            generic_list_remove(&irc_client->registred_channels,
+                                channel, free_irc_channel);
             return 1;
+
         }
     }
     return 1;

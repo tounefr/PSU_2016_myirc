@@ -105,7 +105,6 @@ typedef struct s_packet
 typedef struct s_command_callback
 {
     char *cmd;
-    char (*parser)(t_packet *packet);
     char (*callback)(t_irc_server*, t_irc_client*, t_packet *);
 } t_command_callback;
 extern t_command_callback commands_callbacks[N_COMMAND_CALLBACK];
@@ -114,6 +113,8 @@ extern t_command_callback commands_callbacks[N_COMMAND_CALLBACK];
 int my_select(t_server_select *ss, t_irc_server *irc_server);
 
 // cbuffer.c
+void
+cbuffer_free(t_circular_buffer *cbuffer);
 t_circular_buffer       *cbuffer_new(int size);
 void    cbuffer_debug(t_circular_buffer *cbuffer);
 char cbuffer_get_char_at(t_circular_buffer *cbuffer, int i);
@@ -134,8 +135,12 @@ t_irc_server *get_irc_server();
 void    init_irc_client(t_irc_client *irc_client, int fd);
 void                new_irc_client(t_irc_server *irc_server,
                                    int fd_new_client);
+char
+free_irc_client(void *data);
 
 // server.c
+void
+sigint_handler(int signum);
 char        init_irc_server(t_irc_server *irc_server);
 char    on_server_new_client(t_irc_server *irc_server);
 char                on_exit_client(t_irc_server *irc_server,
