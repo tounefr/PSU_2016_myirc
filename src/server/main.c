@@ -17,13 +17,20 @@ static char usage(char *bin)
     return 1;
 }
 
+t_irc_server *get_irc_server()
+{
+    static t_irc_server irc_server;
+    return &irc_server;
+}
+
 int                 main(int ac, char **av)
 {
-    t_irc_server    irc_server;
+    t_irc_server    *irc_server;
 
     if (ac != 2 || !is_number(av[1]))
         return usage(av[0]);
-    irc_server.listen_address = LISTEN_ADDRESS;
-    irc_server.listen_port = atoi(av[1]);
-    return ((start_irc_server(&irc_server)) ? 0 : 84);
+    irc_server = get_irc_server();
+    irc_server->listen_address = LISTEN_ADDRESS;
+    irc_server->listen_port = atoi(av[1]);
+    return ((start_irc_server(irc_server)) ? 0 : 84);
 }

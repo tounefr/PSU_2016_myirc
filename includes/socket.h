@@ -15,6 +15,7 @@ typedef struct s_socket_infos
 {
     char            *client_ipv4;
     unsigned short  client_port;
+    char            client_hostname[1024];
     char            *server_ipv4;
     unsigned short  server_port;
 } t_socket_infos;

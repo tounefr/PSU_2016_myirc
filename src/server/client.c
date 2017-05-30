@@ -14,11 +14,14 @@ void
 init_irc_client(t_irc_client *irc_client,
                 int fd)
 {
+    irc_client->pseudo = NULL;
+    irc_client->user = NULL;
+    irc_client->realname = NULL;
     irc_client->fd = fd;
     irc_client->cbuffer = cbuffer_new(IRC_PACKET_SIZE);
     irc_client->registred_channels = NULL;
-    irc_client->pseudo = NULL;
-    irc_client->realname = NULL;
+    socket_infos(&fd, &irc_client->socket_infos);
+    irc_client->socket_infos;
 }
 
 void
@@ -30,7 +33,7 @@ new_irc_client(t_irc_server *irc_server,
 
     irc_client = my_malloc(sizeof(t_irc_client));
     init_irc_client(irc_client, fd_new_client);
-    generic_list_append(&irc_server->irc_clients, (void*)irc_client);
+    generic_list_append(&irc_server->irc_clients, irc_client);
 }
 
 char

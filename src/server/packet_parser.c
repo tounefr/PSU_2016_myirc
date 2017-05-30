@@ -17,6 +17,20 @@ char
     strtok(packet, " ");
 }
 
+static char*
+get_ptr_content(char *buffer)
+{
+    int i;
+
+    i = -1;
+    while (buffer[++i]) {
+        if (buffer[i] == ' ' && buffer[i + 1] == ':') {
+            return &buffer[i + 2];
+        }
+    }
+    return NULL;
+}
+
 char
 simple_space_parser(t_packet *packet)
 {
@@ -30,40 +44,15 @@ simple_space_parser(t_packet *packet)
     i = -1;
     while ((token = strtok(buffer, " "))) {
         buffer = NULL;
+        if (token[0] == ':') {
+            packet->content = my_strdup(get_ptr_content(packet->raw));
+            break;
+        }
         if (++i == 0)
-            packet->cmd = token;
+            packet->cmd = my_strdup(token);
         else {
             packet->params[i - 1] = my_strdup(token);
             packet->nbr_params++;
-        }
-    }
-    free(buffer);
-    return 1;
-}
-
-char
-content_with_spaces_parser(t_packet *packet)
-{
-    char *token;
-    int i;
-    char *buffer;
-
-    buffer = strdup_irc_packet(packet->raw);
-    buffer_rm_crlf(buffer);
-    i = -1;
-    while ((token = strtok(buffer, " "))) {
-        buffer = NULL;
-        if (++i == 0)
-            packet->cmd = token;
-        else {
-            if (token[0] == ':') {
-                packet->content = my_strdup(&token[1]);
-                break;
-            }
-            else {
-                packet->params[i - 1] = my_strdup(token);
-                packet->nbr_params++;
-            }
         }
     }
     free(buffer);

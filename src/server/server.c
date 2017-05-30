@@ -42,12 +42,20 @@ char
 on_exit_client(t_irc_server *irc_server,
                t_irc_client *irc_client)
 {
-    //TODO:
-    /*
+    t_channels_list *channels_list;
+    t_irc_channel *channel;
+
+    channels_list = irc_client->registred_channels;
+    while ((channel = generic_list_foreach(channels_list))) {
+        channels_list = NULL;
+        announce_channel_client_part(irc_client, channel);
+        generic_list_remove(&channel->clients, irc_client);
+        /*if (generic_list_count(channel->clients) == 0)
+            free_irc_channel(irc_server, channel);*/
+    }
+    generic_list_remove(&irc_server->irc_clients, irc_client);
     socket_close(&irc_client->fd);
-    free(irc_client);
     return 1;
-     */
 }
 
 char on_client_data(t_irc_server *irc_server,
@@ -108,7 +116,9 @@ start_irc_server(t_irc_server *irc_server)
     while (1) {
         retrv = my_select(&ss, irc_server);
         if (retrv == 0) {
-
+            printf("There is %d clients connected and %d channels\n",
+                   generic_list_count(irc_server->irc_clients),
+                   generic_list_count(irc_server->channels));
         }
         else if (retrv == -1) {
             printf("select error : %s\n", strerror(errno));

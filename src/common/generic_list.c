@@ -50,7 +50,8 @@ generic_list_prepend(t_generic_list **list,
 
 char
 generic_list_remove(t_generic_list **list,
-                    void *elem)
+                    void *elem,
+                    char (*rm_func)(void *))
 {
     t_generic_list *cur;
     t_generic_list *prev;
@@ -65,6 +66,8 @@ generic_list_remove(t_generic_list **list,
                 *list = cur->next;
             else
                 *list = NULL;
+            if (elem)
+                return rm_func(elem);
             return 1;
         }
         prev = cur;

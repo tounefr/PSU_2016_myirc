@@ -13,19 +13,57 @@
 #include "myirc.h"
 
 char
-send_client_list_on_channel(t_irc_server *irc_server,
-                            t_irc_channel *channel)
+send_channel_topic(t_irc_client *irc_client,
+                   t_irc_channel *irc_channel)
 {
-    t_clients_list  *clients;
-    t_irc_client    *client;
+    dprintf(irc_client->fd, "332 %s #test :Topic to be changed\r\n",
+            irc_client->pseudo);
+}
 
-    clients = channel->clients;
-    while ((client = generic_list_foreach(clients))) {
-        clients = NULL;
-        dprintf(client->fd, "352 %s %s %s %s %s %s %s %s\r\n",
-                channel->name, client->pseudo,
-                "<host>", "<server>", "<nick>",
-                "<H|G>[*][@|+]", ":<hopcount>", "<real name>");
+char
+send_channel_client_list(t_irc_server *irc_server,
+                  t_irc_client *irc_client,
+                  t_irc_channel *irc_channel)
+{
+    t_clients_list *clients_in_channel;
+    t_irc_client *client_in_channel;
+    char pseudos_buffer[512];
+    int i;
+    int i2;
+
+    clients_in_channel = irc_channel->clients;
+    do {
+        i = -1;
+        i2 = 0;
+        memset(pseudos_buffer, 0, sizeof(pseudos_buffer));
+        while ((client_in_channel = generic_list_foreach(clients_in_channel))
+               && ++i < 10) {
+            clients_in_channel = NULL;
+            if (i > 0)
+                i2 += sprintf(&pseudos_buffer[i2], " ");
+            i2 += sprintf(&pseudos_buffer[i2], "%s", client_in_channel->pseudo);
+        }
+        dprintf(irc_client->fd, "353 %s @ #%s :%s\r\n",
+                irc_client->pseudo, irc_channel->name, pseudos_buffer);
+    } while (client_in_channel);
+    dprintf(irc_client->fd, "366 thomas #test :End of /NAMES list.\r\n");
+}
+
+char
+announce_client_joined(t_irc_channel *irc_channel,
+                       t_irc_client *irc_client)
+{
+    t_clients_list *clients_in_channel;
+    t_irc_client *client_in_channel;
+
+    clients_in_channel = irc_channel->clients;
+    while ((client_in_channel = generic_list_foreach(clients_in_channel))) {
+        clients_in_channel = NULL;
+        if (irc_client == client_in_channel)
+            continue;
+        dprintf(client_in_channel->fd, ":%s JOIN #%s\r\n",
+                irc_client->pseudo,
+                irc_channel->name);
     }
 }
 
@@ -35,32 +73,43 @@ on_join_command(t_irc_server *irc_server,
                 t_packet *packet)
 {
     t_packet *res;
-    char *channels_names;
     char *channel_name;
     t_irc_channel *channel;
 
+    printf("join\n");
     if (packet->nbr_params == 0)
-        return dprintf(irc_client->fd, "461 :Not enough parameters\r\n");
-    channels_names = my_strdup(packet->params[0]);
-    while ((channel_name = strtok(channels_names, " "))) {
-        channels_names = NULL;
-        if (!(channel = irc_channel_exists(irc_server, channel_name)))
-            channel = new_irc_channel(irc_server, channel_name);
-        if (client_is_in_channel(channel, irc_client))
-            break;
-        generic_list_append(&channel->clients, irc_client);
-        dprintf(irc_client->fd, "332 %s %s :%s\r\n",
-                irc_client->pseudo, channel->name, channel->topic);
-        send_client_list_on_channel(irc_server, channel);
+        return dprintf(irc_client->fd,
+                       "461 :Not enough parameters\r\n");
+    if (!irc_client->pseudo) {
+        printf("pseudo failed\n");
+        return 1;
     }
-    free(channels_names);
+    channel_name = packet->params[0];
+    if (!(channel_name = normalize_channel_name(channel_name))) {
+        printf("normalize channel failed\n");
+        return 1;
+    }
+    if (!(channel = irc_channel_exists(irc_server, channel_name))) {
+        printf("channel doesn't exists\n");
+        channel = new_irc_channel(irc_server, channel_name);
+    }
+    if (client_is_in_channel(channel, irc_client)) {
+        printf("client already in channel\n");
+        return 1;
+    }
+    printf("joined channel\n");
+    generic_list_append(&channel->clients, irc_client);
+    generic_list_append(&irc_client->registred_channels, channel);
+    send_channel_topic(irc_client, channel);
+    send_channel_client_list(irc_server,irc_client, channel);
+    announce_client_joined(channel, irc_client);
     return 1;
 }
 
-char msg_channel(t_irc_server *irc_server,
-                           t_irc_client *irc_client,
-                           t_packet *packet,
-                           char *channel_name)
+char send_msg_channel(t_irc_server *irc_server,
+                      t_irc_client *irc_client,
+                      t_packet *packet,
+                      char *channel_name)
 {
     t_irc_channel *channel;
     t_clients_list *clients;
@@ -72,9 +121,32 @@ char msg_channel(t_irc_server *irc_server,
         return 1;
     if (!client_is_in_channel(channel, irc_client))
         return 1;
+    clients = channel->clients;
     while ((client = generic_list_foreach(clients))) {
         clients = NULL;
-//        dprintf(client->fd, )
+        if (irc_client == client)
+            continue;
+        dprintf(client->fd, ":%s PRIVMSG #%s :%s\r\n",
+                irc_client->pseudo, channel->name, packet->content);
+    }
+}
+
+char
+send_msg_user(t_irc_server *irc_server,
+              t_irc_client *irc_client,
+              t_packet *packet)
+{
+    t_clients_list *clients_list;
+    t_irc_client *client;
+
+    clients_list = irc_server->irc_clients;
+    while ((client = generic_list_foreach(clients_list))) {
+        if (!strcmp(client->pseudo, packet->params[0])) {
+            return dprintf(client->fd, ":%s PRIVMSG %s :%s\r\n",
+                           irc_client->pseudo,
+                           client->pseudo,
+                           packet->content);
+        }
     }
 }
 
@@ -88,7 +160,8 @@ on_privmsg_command(t_irc_server *irc_server,
     if (packet->nbr_params != 1)
         return 1;
     if (packet->params[0][0] == '#')
-        return msg_channel(irc_server, irc_client, packet, channel_name);
-
+        return send_msg_channel(irc_server, irc_client, packet, channel_name);
+    else
+        return send_msg_user(irc_server, irc_client, packet);
     return 1;
 }

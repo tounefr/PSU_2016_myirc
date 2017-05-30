@@ -37,6 +37,7 @@
 # define IRC_SERVER_MAX_CHANNELS 100
 # define IRC_PACKET_NBR_PARAMS 15
 # define IRC_CHANNEL_MAX_CLIENTS 100
+# define IRC_SERVER_HOST "irc.lan"
 
 typedef struct s_circular_buffer
 {
@@ -72,9 +73,11 @@ typedef struct      s_irc_channel
 typedef struct          s_irc_client
 {
     char                *pseudo;
+    char                *user;
     char                *realname;
     int                 fd;
     t_circular_buffer   *cbuffer;
+    t_socket_infos      socket_infos;
     t_channels_list     *registred_channels;
 } t_irc_client;
 
@@ -98,7 +101,7 @@ typedef struct s_packet
     char        *content;
 } t_packet;
 
-# define N_COMMAND_CALLBACK 9
+# define N_COMMAND_CALLBACK 11
 typedef struct s_command_callback
 {
     char *cmd;
@@ -124,6 +127,9 @@ char        *cbuffer_extract(t_circular_buffer *cbuffer,
                              int packet_size,
                              char *delim);
 
+// main.c
+t_irc_server *get_irc_server();
+
 // client.c
 void    init_irc_client(t_irc_client *irc_client, int fd);
 void                new_irc_client(t_irc_server *irc_server,
@@ -141,6 +147,16 @@ char                server_select_on_data(t_server_select *ss,
 char                start_irc_server(t_irc_server *irc_server);
 
 // commands.c
+
+char
+on_ping_command(t_irc_server *irc_server,
+                t_irc_client *irc_client,
+                t_packet *packet);
+
+char
+on_mode_command(t_irc_server *irc_server,
+                t_irc_client *irc_client,
+                t_packet *packet);
 
 char
 on_join_command(t_irc_server *irc_server,
@@ -215,7 +231,7 @@ t_irc_channel *irc_channel_exists(t_irc_server *irc_server, char *name);
 char client_join_channel(t_irc_client *client, t_irc_channel *channel);
 char client_is_in_channel(t_irc_channel *channel, t_irc_client *to_find);
 char client_leave_channel(t_irc_client *client, t_irc_channel *channel);
-void free_irc_channel(t_irc_channel *irc_channel);
+char free_irc_channel(void *data);
 
 // channel_commands.c
 char check_pseudo_already_used(t_irc_server *irc_server, char *pseudo);
