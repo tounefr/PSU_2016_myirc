@@ -17,7 +17,6 @@
 #include <string.h>
 
 // error.c
-char exit_error(int returnv);
 void malloc_error();
 
 // util.c
@@ -26,6 +25,15 @@ void *my_malloc(size_t size);
 int nbr_chars_in_str(char *str, char c);
 char  *my_strdup(char *str);
 
-#define EXIT_ERROR(returnv, ...) {fprintf(stderr, __VA_ARGS__); return returnv;}
+char
+exit_error(char returnv,
+           char *format,
+           ...);
+char*
+exit_ptr_error(char *returnv,
+               char *format,
+               ...);
+
+/*#define EXIT_ERROR(returnv, ...) {fprintf(stderr, __VA_ARGS__); return returnv;}*/
 
 #endif //PROJETS_UTIL_H

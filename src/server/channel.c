@@ -37,11 +37,12 @@ normalize_channel_name(char *channel)
     if (channel[0] == '&' || channel[0] == '#')
         channel++;
     if (strlen(channel) > 200)
-        EXIT_ERROR(NULL, "channel name > 200\n")
+        return exit_ptr_error(0, "channel name > 200\n");
     i = -1;
     while (channel[++i]) {
-        if (channel[i] == 7 || channel[i] == ' ')
-            EXIT_ERROR(NULL, "wrong channel name\n")
+        if (channel[i] < 0 || channel[i] > 255 ||
+            channel[i] == 7 || channel[i] == ' ')
+            return exit_ptr_error(NULL, "wrong channel name\n");
     }
     channel = my_strdup(channel);
     return channel;

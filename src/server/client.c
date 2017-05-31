@@ -43,6 +43,8 @@ free_irc_client(void *data)
     t_irc_client *irc_client;
 
     irc_client = (t_irc_client*)data;
+    if (!irc_client)
+        return 0;
     if (irc_client->pseudo)
         free(irc_client->pseudo);
     if (irc_client->user)

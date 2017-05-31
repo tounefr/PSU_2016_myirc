@@ -19,7 +19,7 @@ char
 socket_init(int *fd)
 {
     if (-1 == (*fd = socket(AF_INET, SOCK_STREAM, 0)))
-        EXIT_ERROR(0, "socket : %s\n", strerror(errno))
+        return exit_error(0, "socket : %s\n", strerror(errno));
     return 1;
 }
 
@@ -36,7 +36,7 @@ socket_connect(int *fd,
     inet_pton(AF_INET, ip, &(sockaddr.sin_addr));
     socksize = sizeof(sockaddr);
     if (-1 == connect(*fd, (struct sockaddr *)&sockaddr, socksize))
-        EXIT_ERROR(0, "connect error : %s\n", strerror(errno))
+        return exit_error(0, "connect error : %s\n", strerror(errno));
     return 1;
 }
 
@@ -48,28 +48,17 @@ char socket_infos(int *socket_fd,
 
     socksize = sizeof(sockaddr);
     if (-1 == getpeername(*socket_fd, (struct sockaddr*)&sockaddr, &socksize))
-        EXIT_ERROR(0, "getpeername failed\n")
+        return exit_error(0, "getpeername failed\n");
     socket_infos->client_ipv4 = my_strdup(inet_ntoa(sockaddr.sin_addr));
     socket_infos->client_port = sockaddr.sin_port;
     memset(socket_infos->client_hostname, 0, sizeof(socket_infos->client_hostname));
     memset(&sockaddr, 0, sizeof(struct sockaddr_in));
     if (-1 == getsockname(*socket_fd, (struct sockaddr*)&sockaddr, &socksize))
-        EXIT_ERROR(0, "getsockname failed\n")
+        return exit_error(0, "getsockname failed\n");
     socket_infos->server_ipv4 = my_strdup(inet_ntoa(sockaddr.sin_addr));
     assert(socket_infos->client_ipv4 != NULL && socket_infos->server_ipv4 != NULL);
     socket_infos->server_port = sockaddr.sin_port;
     return 1;
-}
-
-void
-free_socket_infos(t_socket_infos *socket_infos)
-{
-    if (!socket_infos)
-        return;
-    if (socket_infos->client_ipv4)
-        free(socket_infos->client_ipv4);
-    if (socket_infos->server_ipv4)
-        free(socket_infos->server_ipv4);
 }
 
 char
@@ -77,7 +66,7 @@ socket_send(int *fd,
             char *buffer)
 {
     if (-1 == write(*fd, buffer, strlen(buffer)))
-        EXIT_ERROR(0, "write error : %s\n", strerror(errno))
+        return exit_error(0, "write error : %s\n", strerror(errno));
     return 1;
 }
 

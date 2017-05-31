@@ -9,12 +9,31 @@
 */
 
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
 #include "myirc.h"
 
 char
-exit_error(int returnv)
+exit_error(char returnv,
+           char *format,
+           ...)
 {
-    printf("%s\n", strerror(errno));
+    va_list args;
+    va_start(args, format);
+    fprintf(stderr, format, args);
+    va_end(args);
+    return returnv;
+}
+
+char*
+exit_ptr_error(char *returnv,
+               char *format,
+               ...)
+{
+    va_list args;
+    va_start(args, format);
+    fprintf(stderr, format, args);
+    va_end(args);
     return returnv;
 }
 

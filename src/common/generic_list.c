@@ -69,7 +69,7 @@ generic_list_remove(t_generic_list **list,
                 *list = cur->next;
             else
                 *list = NULL;
-            if (elem)
+            if (rm_func)
                 return rm_func(elem);
             return 1;
         }

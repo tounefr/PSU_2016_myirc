@@ -11,19 +11,11 @@
 #ifndef PROJETS_MYIRC_H
 #define PROJETS_MYIRC_H
 
-/*
-#include <sys/select.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <assert.h>
- */
-
 #include <sys/select.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 #include "util.h"
 #include "socket.h"
@@ -154,6 +146,10 @@ char                start_irc_server(t_irc_server *irc_server);
 // commands.c
 
 char
+announce_channel_client_part(t_irc_client *irc_client,
+                             t_irc_channel *irc_channel);
+
+char
 on_ping_command(t_irc_server *irc_server,
                 t_irc_client *irc_client,
                 t_packet *packet);
@@ -226,7 +222,6 @@ char buffer_rm_crlf(char *buffer);
 char send_reply_packet(int fd, t_packet *res);
 
 // error.c
-char exit_error(int returnv);
 void malloc_error();
 
 // channel.c

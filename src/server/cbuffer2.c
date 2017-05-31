@@ -32,3 +32,22 @@ char
     free(packet);
     return NULL;
 }
+
+void
+cbuffer_copy(t_circular_buffer *cbuffer,
+             char *buff,
+             int buff_size)
+{
+    int i;
+    int i2;
+
+    i = 0;
+    i2 = cbuffer->cur_off;
+    while (buff_size >= 0) {
+        if (cbuffer->cur_off >= cbuffer->size)
+            cbuffer->cur_off = 0;
+        cbuffer->buffer[i2++] = buff[i++];
+//        cbuffer_set_char_at(cbuffer->buffer, i2++, buff[i++]);
+        buff_size--;
+    }
+}

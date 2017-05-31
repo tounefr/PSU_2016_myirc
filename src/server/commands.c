@@ -13,17 +13,17 @@
 
 t_command_callback commands_callbacks[N_COMMAND_CALLBACK] =
 {
-        { "JOIN", on_join_command },
-        { "LIST", on_list_command },
-        { "NICK", on_nick_command },
-        { "PART", on_part_command },
-        { "WHO", on_who_command },
-        { "NAMES", on_names_command },
-        { "PRIVMSG", on_privmsg_command },
-        { "USER", on_user_command },
-        { "QUIT", on_quit_command },
-        { "MODE", on_mode_command },
-        { "PING", on_ping_command }
+    { "JOIN", on_join_command },
+    { "LIST", on_list_command },
+    { "NICK", on_nick_command },
+    { "PART", on_part_command },
+    { "WHO", on_who_command },
+    { "NAMES", on_names_command },
+    { "PRIVMSG", on_privmsg_command },
+    { "USER", on_user_command },
+    { "QUIT", on_quit_command },
+    { "MODE", on_mode_command },
+    { "PING", on_ping_command }
 };
 
 char
@@ -41,6 +41,22 @@ on_mode_command(t_irc_server *irc_server,
                 t_irc_client *irc_client,
                 t_packet *packet)
 {
+    char *channel_name;
+    t_channels_list *channels;
+    t_irc_channel *channel;
+
+    if (packet->nbr_params == 0)
+        return 1;
+    if (packet->params[0][0] == '#') {
+        if (!(channel_name = normalize_channel_name(packet->params[0])))
+            return 1;
+        if (!(channel = irc_channel_exists(irc_server, channel_name)))
+            return 1;
+        dprintf(irc_client->fd, "324 %s #%s +Pgmnstzj 2:2\r\n", irc_client->pseudo, channel->name);
+        return 1;
+    }
+
+    //:verne.freenode.net 324 Guest13741 #test +Pgmnstzj 2:2
     //dprintf(irc_client->fd, "324 thomas #test +Pgmnstzj 2:2\r\n");
     return 1;
 }
@@ -50,6 +66,30 @@ on_list_command(t_irc_server *irc_server,
                 t_irc_client *irc_client,
                 t_packet *packet)
 {
+    t_channels_list *channels;
+    t_irc_channel *channel;
+    char *channel_to_find;
+
+    channel_to_find = NULL;
+    if (packet->nbr_params >= 1) {
+        channel_to_find = packet->params[0];
+        if (!(channel_to_find = normalize_channel_name(channel_to_find)))
+            return 1;
+    }
+    channels = irc_server->channels;
+    dprintf(irc_client->fd, ":%s 321 %s Channel :Users Name\r\n",
+            IRC_SERVER_HOST,
+            irc_client->pseudo);
+    while ((channel = generic_list_foreach(channels))) {
+        channels = NULL;
+        if (!channel_to_find ||
+            (channel_to_find && strstr(channel->name, channel_to_find))) {
+            dprintf(irc_client->fd, "322 %s #%s 4 :%s\r\n",
+                    irc_client->pseudo, channel->name, channel->topic);
+        }
+    }
+    dprintf(irc_client->fd, ":%s 323 %s :End of /LIST\r\n",
+            IRC_SERVER_HOST, irc_client->pseudo);
     return 1;
 }
 
@@ -64,8 +104,9 @@ announce_channel_client_part(t_irc_client *irc_client,
     while ((client_in_channel = generic_list_foreach(clients_in_channel))) {
         clients_in_channel = NULL;
         //thomas__!~thomas@163.5.141.79 PART #test
+        //:thomas!~thomas@163.5.141.79 PART #test
         dprintf(client_in_channel->fd, ":%s!~%s@127.0.0.1 PART #%s\r\n",
-                irc_client->pseudo, irc_client->user, irc_channel->name);
+                irc_client->pseudo, irc_client->pseudo, irc_channel->name);
     }
 }
 
@@ -81,16 +122,20 @@ on_part_command(t_irc_server *irc_server,
     if (packet->nbr_params == 0)
         return dprintf(irc_client->fd, "461 PART :Not enough parameters\r\n");
     if (!(channel_name = normalize_channel_name(packet->params[0])))
-        return dprintf(irc_client->fd, "403 %s :No such channel\r\n", packet->params[0]);
+        return dprintf(irc_client->fd, "403 %s :No such channel\r\n",
+                       packet->params[0]);
     channels = irc_client->registred_channels;
     while ((channel = generic_list_foreach(channels))) {
         channels = NULL;
         if (!strcmp(channel_name, channel->name)) {
             announce_channel_client_part(irc_client, channel);
+            generic_list_remove(&channel->clients,
+                                irc_client, NULL);
             generic_list_remove(&irc_client->registred_channels,
-                                channel, free_irc_channel);
+                                channel, NULL);
+            if (generic_list_count(channel->clients) == 0)
+                generic_list_remove(&irc_server->channels, channel, free_irc_channel);
             return 1;
-
         }
     }
     return 1;

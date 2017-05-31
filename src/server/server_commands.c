@@ -28,7 +28,8 @@ announce_nick_changed(t_irc_client *irc_client,
             clients_in_channel = NULL;
             if (client_in_channel == irc_client)
                 continue;
-            dprintf(client_in_channel->fd, ":%s NICK :%s\r\n", irc_client->pseudo, packet->params[0]);
+            dprintf(client_in_channel->fd, ":%s NICK :%s\r\n",
+                    irc_client->pseudo, packet->params[0]);
         }
     }
 
@@ -43,9 +44,13 @@ on_nick_command(t_irc_server *irc_server,
 
     if (packet->nbr_params == 0)
         return dprintf(irc_client->fd, "431 :No nickname given\r\n");
+    //:cherryh.freenode.net 433 thomas__ tounefr :Nickname is already in use.
     if (check_pseudo_already_used(irc_server, packet->params[0]))
-        return dprintf(irc_client->fd, "433 :Nickname is already in use\r\n");
-    dprintf(irc_client->fd, ":%s NICK :%s\r\n", irc_client->pseudo, packet->params[0]);
+        return dprintf(irc_client->fd,
+                       "433 %s %s :Nickname is already in use\r\n",
+                       irc_client->pseudo, packet->params[0]);
+    dprintf(irc_client->fd, ":%s NICK :%s\r\n",
+            irc_client->pseudo, packet->params[0]);
     announce_nick_changed(irc_client, packet);
     if (irc_client->pseudo)
         free(irc_client->pseudo);

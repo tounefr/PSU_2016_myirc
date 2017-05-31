@@ -8,6 +8,7 @@
 ** Last update Thu May 18 10:33:07 2017 Thomas HENON
 */
 
+#include <stdlib.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include "socket.h"
@@ -26,4 +27,15 @@ socket_port_used(unsigned short port)
     }
     socket_close(&fd);
     return 0;
+}
+
+void
+free_socket_infos(t_socket_infos *socket_infos)
+{
+    if (!socket_infos)
+        return;
+    if (socket_infos->client_ipv4)
+        free(socket_infos->client_ipv4);
+    if (socket_infos->server_ipv4)
+        free(socket_infos->server_ipv4);
 }

@@ -22,8 +22,8 @@ send_channel_topic(t_irc_client *irc_client,
 
 char
 send_channel_client_list(t_irc_server *irc_server,
-                  t_irc_client *irc_client,
-                  t_irc_channel *irc_channel)
+                         t_irc_client *irc_client,
+                         t_irc_channel *irc_channel)
 {
     t_clients_list *clients_in_channel;
     t_irc_client *client_in_channel;
@@ -141,6 +141,7 @@ send_msg_user(t_irc_server *irc_server,
 
     clients_list = irc_server->irc_clients;
     while ((client = generic_list_foreach(clients_list))) {
+        clients_list = NULL;
         if (!strcmp(client->pseudo, packet->params[0])) {
             return dprintf(client->fd, ":%s PRIVMSG %s :%s\r\n",
                            irc_client->pseudo, client->pseudo,
