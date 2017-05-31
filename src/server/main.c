@@ -27,7 +27,6 @@ sigint_handler(int signum)
     if (signum != SIGINT)
         return;
     irc_server = get_irc_server();
-    printf("%p\n%p\n", irc_server->channels, irc_server->irc_clients);
     generic_list_destory(&irc_server->channels, free_irc_channel);
     generic_list_destory(&irc_server->irc_clients, free_irc_client);
     exit(1);

@@ -49,10 +49,10 @@ on_exit_client(t_irc_server *irc_server,
     while ((channel = generic_list_foreach(channels_list))) {
         channels_list = NULL;
         announce_channel_client_part(irc_client, channel);
-        generic_list_remove(&channel->clients, irc_client, free_irc_client);
+        generic_list_remove(&channel->clients, irc_client, NULL);
     }
-    generic_list_remove(&irc_server->irc_clients, irc_client, free_irc_client);
     socket_close(&irc_client->fd);
+    generic_list_remove(&irc_server->irc_clients, irc_client, NULL);//TODO: fix NULL
     return 1;
 }
 

@@ -70,15 +70,13 @@ parse_irc_packet(t_irc_server *irc_server,
         while (++i < N_COMMAND_CALLBACK) {
             cmd_call = &commands_callbacks[i];
             if (!strcmp(cmd_call->cmd, token)) {
-              //  if (!(cmd_call->flags & FLAG_LOG_FIRST) || irc_client->logged) {
-                    if (simple_space_parser(packet))
-                        returnv = cmd_call->callback(irc_server, irc_client, packet);
-               // }
+                if (simple_space_parser(packet))
+                    returnv = cmd_call->callback(irc_server,
+                                                 irc_client, packet);
                 break;
             }
         }
     }
     free(tmp);
     return returnv;
-//    EXIT_ERROR(0, "Unknown packet\n")
 }

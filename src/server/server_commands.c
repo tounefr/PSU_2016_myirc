@@ -75,11 +75,23 @@ on_user_command(t_irc_server *irc_server,
     t_packet *res;
 
     if (packet->nbr_params != 3)
-        return dprintf(irc_client->fd, "461 :Not enough parameters\r\n");
+        return dprintf(irc_client->fd, ":%s 461 :Not enough parameters\r\n",
+                       IRC_SERVER_HOST);
     irc_client->user = my_strdup(packet->params[0]);
     irc_client->realname = my_strdup(packet->content);
-    dprintf(irc_client->fd, "001 %s :Welcome\r\n", irc_client->pseudo);
-
+    if (irc_client->pseudo)
+        irc_client->logged = 1;
+    dprintf(irc_client->fd, ":%s 001 %s :Welcome\r\n",
+            IRC_SERVER_HOST, irc_client->pseudo);
+    dprintf(irc_client->fd,
+            ":%s 005 %s CHANTYPES=# CHARSET=ascii "
+            "NICKLEN=16 CHANNELLEN=50 TOPICLEN=390 "
+            ":are supported by this server\r\n",
+            IRC_SERVER_HOST, irc_client->pseudo);
+    dprintf(irc_client->fd, ":%s 376 %s :End of /MOTD command\r\n",
+            IRC_SERVER_HOST, irc_client->pseudo);
+    dprintf(irc_client->fd, ":%s MODE %s :+i\r\n",
+            irc_client->pseudo, irc_client->pseudo);
     return 1;
 }
 

@@ -43,10 +43,12 @@ send_channel_client_list(t_irc_server *irc_server,
                 i2 += sprintf(&pseudos_buffer[i2], " ");
             i2 += sprintf(&pseudos_buffer[i2], "%s", client_in_channel->pseudo);
         }
-        dprintf(irc_client->fd, "353 %s @ #%s :%s\r\n",
-                irc_client->pseudo, irc_channel->name, pseudos_buffer);
+        dprintf(irc_client->fd, ":%s 353 %s @ #%s :%s\r\n",
+                IRC_SERVER_HOST, irc_client->pseudo,
+                irc_channel->name, pseudos_buffer);
     } while (client_in_channel);
-    dprintf(irc_client->fd, "366 thomas #test :End of /NAMES list.\r\n");
+    dprintf(irc_client->fd, ":%s 366 %s #%s :End of /NAMES list.\r\n",
+            IRC_SERVER_HOST, irc_client->pseudo, irc_channel->name);
 }
 
 char
@@ -75,31 +77,25 @@ on_join_command(t_irc_server *irc_server,
     char *channel_name;
     t_irc_channel *channel;
 
-    printf("join\n");
     if (packet->nbr_params == 0)
-        return dprintf(irc_client->fd,
-                       "461 :Not enough parameters\r\n");
-    if (!irc_client->pseudo) {
-        printf("pseudo failed\n");
+        return dprintf(irc_client->fd, "461 :Not enough parameters\r\n");
+    if (!irc_client->pseudo)
         return 1;
-    }
     channel_name = packet->params[0];
-    if (!(channel_name = normalize_channel_name(channel_name))) {
-        printf("normalize channel failed\n");
+    if (!(channel_name = normalize_channel_name(channel_name)))
         return 1;
-    }
-    if (!(channel = irc_channel_exists(irc_server, channel_name))) {
-        printf("channel doesn't exists\n");
+    if (!(channel = irc_channel_exists(irc_server, channel_name)))
         channel = new_irc_channel(irc_server, channel_name);
-    }
-    if (client_is_in_channel(channel, irc_client)) {
-        printf("client already in channel\n");
+    if (client_is_in_channel(channel, irc_client))
         return 1;
-    }
-    printf("joined channel\n");
     generic_list_append(&channel->clients, irc_client);
     generic_list_append(&irc_client->registred_channels, channel);
-    send_channel_topic(irc_client, channel);
+    dprintf(irc_client->fd, ":%s!~%s@127.0.0.1 JOIN #%s\r\n",
+            irc_client->pseudo, irc_client->user, channel_name);
+    dprintf(irc_client->fd, "331 %s #%s :No topic is set\r\n",
+            irc_client->pseudo, channel_name);
+    dprintf(irc_client->fd, ":%s MODE #%s +ns\r\n",
+            IRC_SERVER_HOST, channel_name);
     send_channel_client_list(irc_server,irc_client, channel);
     announce_client_joined(channel, irc_client);
     return 1;

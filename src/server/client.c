@@ -19,6 +19,7 @@ init_irc_client(t_irc_client *irc_client,
     irc_client->user = NULL;
     irc_client->realname = NULL;
     irc_client->fd = fd;
+    irc_client->logged = 0;
     irc_client->cbuffer = cbuffer_new(IRC_PACKET_SIZE);
     irc_client->registred_channels = NULL;
     socket_infos(&fd, &irc_client->socket_infos);

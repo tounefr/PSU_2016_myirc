@@ -67,6 +67,7 @@ typedef struct          s_irc_client
     char                *pseudo;
     char                *user;
     char                *realname;
+    char                logged;
     int                 fd;
     t_circular_buffer   *cbuffer;
     t_socket_infos      socket_infos;
@@ -93,11 +94,15 @@ typedef struct s_packet
     char        *content;
 } t_packet;
 
-# define N_COMMAND_CALLBACK 11
+# define N_COMMAND_CALLBACK 12
+
+# define FLAG_NONE 0
+# define FLAG_LOG_FIRST 1
 typedef struct s_command_callback
 {
     char *cmd;
     char (*callback)(t_irc_server*, t_irc_client*, t_packet *);
+    char flags;
 } t_command_callback;
 extern t_command_callback commands_callbacks[N_COMMAND_CALLBACK];
 
@@ -144,6 +149,11 @@ char                server_select_on_data(t_server_select *ss,
 char                start_irc_server(t_irc_server *irc_server);
 
 // commands.c
+
+char
+on_whois_command(t_irc_server *irc_server,
+                 t_irc_client *irc_client,
+                 t_packet *packet);
 
 char
 announce_channel_client_part(t_irc_client *irc_client,

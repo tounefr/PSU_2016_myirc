@@ -13,18 +13,45 @@
 
 t_command_callback commands_callbacks[N_COMMAND_CALLBACK] =
 {
-    { "JOIN", on_join_command },
-    { "LIST", on_list_command },
-    { "NICK", on_nick_command },
-    { "PART", on_part_command },
-    { "WHO", on_who_command },
-    { "NAMES", on_names_command },
-    { "PRIVMSG", on_privmsg_command },
-    { "USER", on_user_command },
-    { "QUIT", on_quit_command },
-    { "MODE", on_mode_command },
-    { "PING", on_ping_command }
+    { "JOIN", on_join_command, FLAG_LOG_FIRST },
+    { "LIST", on_list_command, FLAG_LOG_FIRST },
+    { "NICK", on_nick_command, FLAG_NONE },
+    { "PART", on_part_command, FLAG_LOG_FIRST },
+    { "WHO", on_who_command, FLAG_LOG_FIRST },
+    { "NAMES", on_names_command, FLAG_LOG_FIRST },
+    { "PRIVMSG", on_privmsg_command, FLAG_LOG_FIRST },
+    { "USER", on_user_command, FLAG_NONE },
+    { "QUIT", on_quit_command, FLAG_NONE },
+    { "MODE", on_mode_command, FLAG_LOG_FIRST },
+    { "PING", on_ping_command, FLAG_NONE },
+    { "WHOIS", on_whois_command, FLAG_LOG_FIRST }
 };
+
+char
+client_whois(t_irc_server *irc_server,
+             t_irc_client *irc_client,
+             t_packet *packet)
+{
+    t_clients_list *clients;
+
+}
+
+char
+channel_whois(t_irc_server *irc_server,
+              t_irc_client *irc_client,
+              t_packet *packet)
+{
+
+}
+
+char
+on_whois_command(t_irc_server *irc_server,
+                t_irc_client *irc_client,
+                t_packet *packet)
+{
+
+    return 1;
+}
 
 char
 on_ping_command(t_irc_server *irc_server,
@@ -34,7 +61,6 @@ on_ping_command(t_irc_server *irc_server,
     dprintf(irc_client->fd, "PONG %s\r\n", packet->params[0]);
     return 1;
 }
-
 
 char
 on_mode_command(t_irc_server *irc_server,
@@ -52,7 +78,7 @@ on_mode_command(t_irc_server *irc_server,
             return 1;
         if (!(channel = irc_channel_exists(irc_server, channel_name)))
             return 1;
-        dprintf(irc_client->fd, "324 %s #%s +Pgmnstzj 2:2\r\n", irc_client->pseudo, channel->name);
+        dprintf(irc_client->fd, "324 %s #%s +ns\r\n", irc_client->pseudo, channel->name);
         return 1;
     }
 
@@ -82,8 +108,7 @@ on_list_command(t_irc_server *irc_server,
             irc_client->pseudo);
     while ((channel = generic_list_foreach(channels))) {
         channels = NULL;
-        if (!channel_to_find ||
-            (channel_to_find && strstr(channel->name, channel_to_find))) {
+        if (!channel_to_find || strstr(channel->name, channel_to_find)) {
             dprintf(irc_client->fd, "322 %s #%s 4 :%s\r\n",
                     irc_client->pseudo, channel->name, channel->topic);
         }
