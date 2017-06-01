@@ -8,16 +8,14 @@
 ** Last update Sun May 28 12:37:41 2017 Thomas HENON
 */
 
-#include <stdlib.h>
-#include "myirc.h"
-#include "util.h"
+#include "server.h"
 
-t_irc_channel*
+t_channel*
 new_irc_channel(t_irc_server *irc_server, char *name)
 {
-    t_irc_channel *irc_channel;
+    t_channel *irc_channel;
 
-    irc_channel = my_malloc(sizeof(t_irc_channel));
+    irc_channel = my_malloc(sizeof(t_channel));
     irc_channel->name = my_strdup(name);
     irc_channel->max_clients = IRC_CHANNEL_MAX_CLIENTS;
     irc_channel->clients = NULL;
@@ -48,11 +46,11 @@ normalize_channel_name(char *channel)
     return channel;
 }
 
-t_irc_channel*
+t_channel*
 irc_channel_exists(t_irc_server *irc_server, char *name)
 {
     t_channels_list *channels;
-    t_irc_channel *channel;
+    t_channel *channel;
 
     if (!name)
         return NULL;
@@ -66,9 +64,9 @@ irc_channel_exists(t_irc_server *irc_server, char *name)
 }
 
 char
-client_is_in_channel(t_irc_channel *channel, t_irc_client *to_find)
+client_is_in_channel(t_channel *channel, t_client *to_find)
 {
-    t_irc_client *client;
+    t_client *client;
     t_clients_list *clients;
 
     clients = channel->clients;

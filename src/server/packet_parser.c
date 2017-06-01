@@ -8,8 +8,7 @@
 ** Last update Sun May 28 00:03:26 2017 Thomas HENON
 */
 
-#include <stdlib.h>
-#include "myirc.h"
+#include "server.h"
 
 char
 *packet_get_param(char *packet)

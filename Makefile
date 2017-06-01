@@ -13,16 +13,19 @@ CC = gcc
 RM = rm -f
 
 SERVER_NAME = server
-SERVER_SRCS =   src/common/my_select.c \
-                src/common/network/socket.c \
-                src/common/network/socket2.c \
-                src/common/network/socket_server.c \
-                src/common/util.c \
-                src/common/error.c \
-                src/common/generic_list.c \
-                src/common/generic_list2.c \
-                src/server/cbuffer.c \
-                src/server/cbuffer2.c \
+CLIENT_NAME = client
+
+COMMON_SRCS = src/common/network/socket.c \
+              src/common/network/socket2.c \
+              src/common/network/socket_server.c \
+              src/common/util.c \
+              src/common/error.c \
+              src/common/generic_list.c \
+              src/common/generic_list2.c \
+              src/common/cbuffer.c \
+              src/common/cbuffer2.c
+
+SERVER_SRCS =   $(COMMON_SRCS) \
                 src/server/client.c \
                 src/server/commands.c \
                 src/server/main.c \
@@ -34,11 +37,13 @@ SERVER_SRCS =   src/common/my_select.c \
                 src/server/channel_commands.c \
                 src/server/channel.c \
                 src/server/channel2.c \
+                src/server/select.c
+
+CLIENT_SRCS =   $(COMMON_SRCS) \
+                src/client/main.c \
+                src/client/cli_commands.c
 
 SERVER_OBJS = $(SERVER_SRCS:.c=.o)
-
-CLIENT_NAME = client
-CLIENT_SRCS = src/client/main.c
 CLIENT_OBJS = $(CLIENT_SRCS:.c=.o)
 
 LDFLAGS+= -g

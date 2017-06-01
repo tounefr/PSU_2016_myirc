@@ -8,8 +8,7 @@
 ** Last update Sat May 27 20:18:06 2017 Thomas HENON
 */
 
-#include <stdlib.h>
-#include "myirc.h"
+#include "server.h"
 
 t_command_callback commands_callbacks[N_COMMAND_CALLBACK] =
 {
@@ -29,7 +28,7 @@ t_command_callback commands_callbacks[N_COMMAND_CALLBACK] =
 
 char
 client_whois(t_irc_server *irc_server,
-             t_irc_client *irc_client,
+             t_client *irc_client,
              t_packet *packet)
 {
     t_clients_list *clients;
@@ -38,7 +37,7 @@ client_whois(t_irc_server *irc_server,
 
 char
 channel_whois(t_irc_server *irc_server,
-              t_irc_client *irc_client,
+              t_client *irc_client,
               t_packet *packet)
 {
 
@@ -46,7 +45,7 @@ channel_whois(t_irc_server *irc_server,
 
 char
 on_whois_command(t_irc_server *irc_server,
-                t_irc_client *irc_client,
+                t_client *irc_client,
                 t_packet *packet)
 {
 
@@ -55,7 +54,7 @@ on_whois_command(t_irc_server *irc_server,
 
 char
 on_ping_command(t_irc_server *irc_server,
-                t_irc_client *irc_client,
+                t_client *irc_client,
                 t_packet *packet)
 {
     dprintf(irc_client->fd, "PONG %s\r\n", packet->params[0]);
@@ -64,12 +63,12 @@ on_ping_command(t_irc_server *irc_server,
 
 char
 on_mode_command(t_irc_server *irc_server,
-                t_irc_client *irc_client,
+                t_client *irc_client,
                 t_packet *packet)
 {
     char *channel_name;
     t_channels_list *channels;
-    t_irc_channel *channel;
+    t_channel *channel;
 
     if (packet->nbr_params == 0)
         return 1;
@@ -89,11 +88,11 @@ on_mode_command(t_irc_server *irc_server,
 
 char
 on_list_command(t_irc_server *irc_server,
-                t_irc_client *irc_client,
+                t_client *irc_client,
                 t_packet *packet)
 {
     t_channels_list *channels;
-    t_irc_channel *channel;
+    t_channel *channel;
     char *channel_to_find;
 
     channel_to_find = NULL;
@@ -119,11 +118,11 @@ on_list_command(t_irc_server *irc_server,
 }
 
 char
-announce_channel_client_part(t_irc_client *irc_client,
-                             t_irc_channel *irc_channel)
+announce_channel_client_part(t_client *irc_client,
+                             t_channel *irc_channel)
 {
     t_clients_list *clients_in_channel;
-    t_irc_client *client_in_channel;
+    t_client *client_in_channel;
 
     clients_in_channel = irc_channel->clients;
     while ((client_in_channel = generic_list_foreach(clients_in_channel))) {
@@ -137,11 +136,11 @@ announce_channel_client_part(t_irc_client *irc_client,
 
 char
 on_part_command(t_irc_server *irc_server,
-                t_irc_client *irc_client,
+                t_client *irc_client,
                 t_packet *packet)
 {
     t_channels_list *channels;
-    t_irc_channel *channel;
+    t_channel *channel;
     char *channel_name;
 
     if (packet->nbr_params == 0)
@@ -159,7 +158,7 @@ on_part_command(t_irc_server *irc_server,
             generic_list_remove(&irc_client->registred_channels,
                                 channel, NULL);
             if (generic_list_count(channel->clients) == 0)
-                generic_list_remove(&irc_server->channels, channel, free_irc_channel);
+                generic_list_remove(&irc_server->channels, channel, free_channel);
             return 1;
         }
     }
@@ -168,7 +167,7 @@ on_part_command(t_irc_server *irc_server,
 
 char
 on_who_command(t_irc_server *irc_server,
-               t_irc_client *irc_client,
+               t_client *irc_client,
                t_packet *packet)
 {
     dprintf(irc_client->fd, "352 thomas #test ~thomas 163.5.141.79 cherryh.freenode.net thomas H+ :0 thomas\r\n");

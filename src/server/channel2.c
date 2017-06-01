@@ -1,16 +1,15 @@
 
-#include <stdlib.h>
-#include "myirc.h"
+#include "server.h"
 
 char
-free_irc_channel(void *data)
+free_channel(void *data)
 {
-    t_irc_channel *irc_channel;
-    t_irc_client *client;
+    t_channel *irc_channel;
+    t_client *client;
 
     if (!data)
         return 0;
-    irc_channel = (t_irc_channel*)data;
+    irc_channel = (t_channel*)data;
     if (irc_channel->name)
         free(irc_channel->name);
     if (irc_channel->topic)

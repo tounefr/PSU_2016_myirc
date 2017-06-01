@@ -8,11 +8,10 @@
 ** Last update Sat May 27 20:18:01 2017 Thomas HENON
 */
 
-#include <stdlib.h>
-#include "myirc.h"
+#include "server.h"
 
 void
-init_irc_client(t_irc_client *irc_client,
+init_client(t_client *irc_client,
                 int fd)
 {
     irc_client->pseudo = NULL;
@@ -30,20 +29,20 @@ void
 new_irc_client(t_irc_server *irc_server,
                int fd_new_client)
 {
-    t_irc_client *irc_client;
+    t_client *irc_client;
     t_clients_list *clients;
 
-    irc_client = my_malloc(sizeof(t_irc_client));
-    init_irc_client(irc_client, fd_new_client);
+    irc_client = my_malloc(sizeof(t_client));
+    init_client(irc_client, fd_new_client);
     generic_list_append(&irc_server->irc_clients, irc_client);
 }
 
 char
 free_irc_client(void *data)
 {
-    t_irc_client *irc_client;
+    t_client *irc_client;
 
-    irc_client = (t_irc_client*)data;
+    irc_client = (t_client*)data;
     if (!irc_client)
         return 0;
     if (irc_client->pseudo)
@@ -63,7 +62,7 @@ check_pseudo_already_used(t_irc_server *irc_server,
                           char *pseudo)
 {
     t_clients_list *clients;
-    t_irc_client *client;
+    t_client *client;
 
     clients = irc_server->irc_clients;
     while ((client = generic_list_foreach(clients))) {

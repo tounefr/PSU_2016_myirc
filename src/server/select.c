@@ -8,10 +8,10 @@
 ** Last update Sat May 27 20:17:09 2017 Thomas HENON
 */
 
-#include "myirc.h"
+#include "server.h"
 
 static void
-init_server_select(t_server_select *server_select,
+init_my_select(t_my_select *server_select,
                    int server_fd)
 {
     server_select->timeout.tv_sec = 0;
@@ -24,7 +24,7 @@ init_server_select(t_server_select *server_select,
 }
 
 static void
-add_readfd_server_select(t_server_select *server_select,
+add_readfd_server_select(t_my_select *server_select,
                          int fd)
 {
     FD_SET(fd, &server_select->readfds);
@@ -38,7 +38,7 @@ get_highest_read_fd(t_irc_server *irc_server)
 {
     int fd;
     t_clients_list *clients;
-    t_irc_client *client;
+    t_client *client;
 
     clients = irc_server->irc_clients;
     fd = -1;
@@ -53,10 +53,10 @@ get_highest_read_fd(t_irc_server *irc_server)
 }
 
 static void
-add_readfd_clients(t_server_select *server_select,
+add_readfd_clients(t_my_select *server_select,
                    t_clients_list *clients)
 {
-    t_irc_client *client;
+    t_client *client;
 
     while ((client = generic_list_foreach(clients))) {
         clients = NULL;
@@ -68,10 +68,10 @@ add_readfd_clients(t_server_select *server_select,
 }
 
 int
-my_select(t_server_select *ss,
+my_select(t_my_select *ss,
           t_irc_server *irc_server)
 {
-    init_server_select(ss, irc_server->fd_server);
+    init_my_select(ss, irc_server->fd_server);
     add_readfd_server_select(ss, irc_server->fd_server);
     add_readfd_clients(ss, irc_server->irc_clients);
     ss->nfds = get_highest_read_fd(irc_server) + 1;

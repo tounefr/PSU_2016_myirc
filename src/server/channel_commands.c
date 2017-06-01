@@ -8,13 +8,11 @@
 ** Last update Sun May 28 00:06:39 2017 Thomas HENON
 */
 
-#include <stdlib.h>
-#include <string.h>
-#include "myirc.h"
+#include "server.h"
 
 char
-send_channel_topic(t_irc_client *irc_client,
-                   t_irc_channel *irc_channel)
+send_channel_topic(t_client *irc_client,
+                   t_channel *irc_channel)
 {
     dprintf(irc_client->fd, "332 %s #test :Topic to be changed\r\n",
             irc_client->pseudo);
@@ -22,11 +20,11 @@ send_channel_topic(t_irc_client *irc_client,
 
 char
 send_channel_client_list(t_irc_server *irc_server,
-                         t_irc_client *irc_client,
-                         t_irc_channel *irc_channel)
+                         t_client *irc_client,
+                         t_channel *irc_channel)
 {
     t_clients_list *clients_in_channel;
-    t_irc_client *client_in_channel;
+    t_client *client_in_channel;
     char pseudos_buffer[512];
     int i;
     int i2;
@@ -52,11 +50,11 @@ send_channel_client_list(t_irc_server *irc_server,
 }
 
 char
-announce_client_joined(t_irc_channel *irc_channel,
-                       t_irc_client *irc_client)
+announce_client_joined(t_channel *irc_channel,
+                       t_client *irc_client)
 {
     t_clients_list *clients_in_channel;
-    t_irc_client *client_in_channel;
+    t_client *client_in_channel;
 
     clients_in_channel = irc_channel->clients;
     while ((client_in_channel = generic_list_foreach(clients_in_channel))) {
@@ -70,12 +68,12 @@ announce_client_joined(t_irc_channel *irc_channel,
 
 char
 on_join_command(t_irc_server *irc_server,
-                t_irc_client *irc_client,
+                t_client *irc_client,
                 t_packet *packet)
 {
     t_packet *res;
     char *channel_name;
-    t_irc_channel *channel;
+    t_channel *channel;
 
     if (packet->nbr_params == 0)
         return dprintf(irc_client->fd, "461 :Not enough parameters\r\n");
@@ -103,13 +101,13 @@ on_join_command(t_irc_server *irc_server,
 
 char
 send_msg_channel(t_irc_server *irc_server,
-                 t_irc_client *irc_client,
+                 t_client *irc_client,
                  t_packet *packet,
                  char *channel_name)
 {
-    t_irc_channel *channel;
+    t_channel *channel;
     t_clients_list *clients;
-    t_irc_client *client;
+    t_client *client;
 
     if (!(channel_name = normalize_channel_name(packet->params[0])))
         return 1;
@@ -129,11 +127,11 @@ send_msg_channel(t_irc_server *irc_server,
 
 char
 send_msg_user(t_irc_server *irc_server,
-              t_irc_client *irc_client,
+              t_client *irc_client,
               t_packet *packet)
 {
     t_clients_list *clients_list;
-    t_irc_client *client;
+    t_client *client;
 
     clients_list = irc_server->irc_clients;
     while ((client = generic_list_foreach(clients_list))) {
@@ -148,7 +146,7 @@ send_msg_user(t_irc_server *irc_server,
 
 char
 on_privmsg_command(t_irc_server *irc_server,
-                   t_irc_client *irc_client,
+                   t_client *irc_client,
                    t_packet *packet)
 {
     char *channel_name;

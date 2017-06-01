@@ -1,6 +1,6 @@
 
-#include <stdlib.h>
-#include "myirc.h"
+#include "util.h"
+#include "cbuffer.h"
 
 char
 *cbuffer_extract(t_circular_buffer *cbuffer,

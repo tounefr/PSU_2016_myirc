@@ -8,9 +8,7 @@
 ** Last update Sat May 27 20:18:18 2017 Thomas HENON
 */
 
-#include <stdlib.h>
-#include <unistd.h>
-#include "myirc.h"
+#include "server.h"
 
 char
 init_irc_server(t_irc_server *irc_server)
@@ -40,10 +38,10 @@ on_server_new_client(t_irc_server *irc_server)
 
 char
 on_exit_client(t_irc_server *irc_server,
-               t_irc_client *irc_client)
+               t_client *irc_client)
 {
     t_channels_list *channels_list;
-    t_irc_channel *channel;
+    t_channel *channel;
 
     channels_list = irc_client->registred_channels;
     while ((channel = generic_list_foreach(channels_list))) {
@@ -58,7 +56,7 @@ on_exit_client(t_irc_server *irc_server,
 
 char
 on_client_data(t_irc_server *irc_server,
-               t_irc_client *irc_client)
+               t_client *irc_client)
 {
     char        buffer[BUFFER_SIZE];
     int         readv;
@@ -85,12 +83,12 @@ on_client_data(t_irc_server *irc_server,
 }
 
 char
-server_select_on_data(t_server_select *ss,
+server_select_on_data(t_my_select *ss,
                       t_irc_server *irc_server)
 {
-    t_irc_client    *client;
+    t_client    *client;
     t_clients_list  *clients;
-    t_irc_client    *next;
+    t_client    *next;
 
     if (FD_ISSET(irc_server->fd_server, &ss->readfds)) {
         if (!on_server_new_client(irc_server))
@@ -108,7 +106,7 @@ server_select_on_data(t_server_select *ss,
 char
 start_irc_server(t_irc_server *irc_server)
 {
-    t_server_select ss;
+    t_my_select ss;
     int             retrv;
 
     if (!init_irc_server(irc_server))

@@ -15,6 +15,21 @@
 #include <errno.h>
 #include <assert.h>
 #include <string.h>
+#include <stdarg.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+
+typedef struct      t_my_select
+{
+    int             nfds;
+    int             readfds_n;
+    fd_set          readfds;
+    fd_set          writefds;
+    int             writefds_n;
+    struct timeval  timeout;
+    fd_set          exceptfds;
+} t_my_select;
 
 // error.c
 void malloc_error();

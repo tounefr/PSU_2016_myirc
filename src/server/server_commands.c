@@ -8,17 +8,16 @@
 ** Last update Sun May 28 00:06:26 2017 Thomas HENON
 */
 
-#include <stdlib.h>
-#include "myirc.h"
+#include "server.h"
 
 char
-announce_nick_changed(t_irc_client *irc_client,
+announce_nick_changed(t_client *irc_client,
                       t_packet *packet)
 {
     t_channels_list *registred_channels;
-    t_irc_channel *irc_channel;
+    t_channel *irc_channel;
     t_clients_list *clients_in_channel;
-    t_irc_client *client_in_channel;
+    t_client *client_in_channel;
 
     registred_channels = irc_client->registred_channels;
     while ((irc_channel = generic_list_foreach(registred_channels))) {
@@ -37,7 +36,7 @@ announce_nick_changed(t_irc_client *irc_client,
 
 char
 on_nick_command(t_irc_server *irc_server,
-                t_irc_client *irc_client,
+                t_client *irc_client,
                 t_packet *packet)
 {
     t_packet *res;
@@ -61,7 +60,7 @@ on_nick_command(t_irc_server *irc_server,
 
 char
 on_names_command(t_irc_server *irc_server,
-                 t_irc_client *irc_client,
+                 t_client *irc_client,
                  t_packet *packet)
 {
     return 1;
@@ -69,7 +68,7 @@ on_names_command(t_irc_server *irc_server,
 
 char
 on_user_command(t_irc_server *irc_server,
-                t_irc_client *irc_client,
+                t_client *irc_client,
                 t_packet *packet)
 {
     t_packet *res;
@@ -97,7 +96,7 @@ on_user_command(t_irc_server *irc_server,
 
 char
 on_quit_command(t_irc_server *irc_server,
-                t_irc_client *irc_client,
+                t_client *irc_client,
                 t_packet *packet)
 {
     on_exit_client(irc_server, irc_client);

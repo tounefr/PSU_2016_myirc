@@ -8,14 +8,12 @@
 ** Last update Sat May 27 20:18:12 2017 Thomas HENON
 */
 
-#include <signal.h>
-#include <stdlib.h>
-#include "myirc.h"
+#include "server.h"
 
 static char
 usage(char *bin)
 {
-    fprintf(stderr, "Usage: %s --help\n", bin);
+    fprintf(stderr, "Usage: %s port\n", bin);
     return 1;
 }
 
@@ -27,7 +25,7 @@ sigint_handler(int signum)
     if (signum != SIGINT)
         return;
     irc_server = get_irc_server();
-    generic_list_destory(&irc_server->channels, free_irc_channel);
+    generic_list_destory(&irc_server->channels, free_channel);
     generic_list_destory(&irc_server->irc_clients, free_irc_client);
     exit(1);
 }

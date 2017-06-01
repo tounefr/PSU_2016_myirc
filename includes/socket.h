@@ -29,4 +29,9 @@ char socket_send(int *fd, char *buffer);
 char socket_close(int *fd);
 char socket_port_used(unsigned short port);
 
+char socket_accept(int *server_socket, int *client_socket);
+char socket_listen(int *server_fd,
+                   char *listen_address,
+                   unsigned short *listen_port);
+
 #endif //PROJETS_SOCKET_H

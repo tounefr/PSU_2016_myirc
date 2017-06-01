@@ -8,8 +8,8 @@
 ** Last update Sat May 27 20:17:54 2017 Thomas HENON
 */
 
-#include <stdlib.h>
-#include "myirc.h"
+#include "util.h"
+#include "cbuffer.h"
 
 t_circular_buffer*
 cbuffer_new(int size)

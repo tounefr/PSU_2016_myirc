@@ -8,8 +8,7 @@
 ** Last update Sun May 28 00:03:17 2017 Thomas HENON
 */
 
-#include <stdlib.h>
-#include "myirc.h"
+#include "server.h"
 
 t_packet
 *init_packet(char *raw)
@@ -52,7 +51,7 @@ free_packet(t_packet *packet)
 
 char
 parse_irc_packet(t_irc_server *irc_server,
-                 t_irc_client *irc_client,
+                 t_client *irc_client,
                  t_packet *packet)
 {
     int i;

@@ -8,7 +8,7 @@
 ** Last update Mon May 29 10:38:49 2017 Thomas HENON
 */
 
-#include "myirc.h"
+#include "server.h"
 
 char
 buffer_rm_crlf(char *buffer)
