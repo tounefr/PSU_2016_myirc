@@ -19,6 +19,9 @@
 # define IRC_CHANNEL_MAX_CLIENTS 100
 # define IRC_SERVER_HOST "irc.lan"
 
+# define FLAG_NONE 0
+# define FLAG_LOG_FIRST 1
+
 typedef t_generic_list t_channels_list;
 typedef t_generic_list t_clients_list;
 
@@ -33,5 +36,18 @@ typedef struct s_packet
     char        *content;
 } t_packet;
 
+// packet.c
+t_packet *init_packet(char *raw);
+void free_packet(t_packet *packet);
+void packet_set(t_packet *packet, char *cmd, char *content);
+void packet_set_param(t_packet *packet, int i, char *param);
+void packet_set_params(t_packet *packet, int nbr_params, ...);
+char buffer_rm_crlf(char *buffer);
+char send_reply_packet(int fd, t_packet *res);
+
+char
+*strdup_irc_packet(char *buffer);
+char
+simple_space_parser(t_packet *packet);
 
 #endif //PROJETS_COMMON_H

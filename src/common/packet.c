@@ -8,8 +8,7 @@
 ** Last update Sun May 28 00:03:17 2017 Thomas HENON
 */
 
-#include <stdlib.h>
-#include "myirc.h"
+#include "server.h"
 
 t_packet
 *init_packet(char *raw)
@@ -48,35 +47,4 @@ free_packet(t_packet *packet)
     if (packet->content)
         free(packet->content);
     free(packet);
-}
-
-char
-parse_irc_packet(t_irc_server *irc_server,
-                 t_irc_client *irc_client,
-                 t_packet *packet)
-{
-    int i;
-    char *token;
-    char *buffer;
-    char *tmp;
-    int returnv;
-    t_command_callback *cmd_call;
-
-    buffer = strdup_irc_packet(packet->raw);
-    tmp = buffer;
-    while ((token = strtok(buffer, " "))) {
-        buffer = NULL;
-        i = -1;
-        while (++i < N_COMMAND_CALLBACK) {
-            cmd_call = &commands_callbacks[i];
-            if (!strcmp(cmd_call->cmd, token)) {
-                if (simple_space_parser(packet))
-                    returnv = cmd_call->callback(irc_server,
-                                                 irc_client, packet);
-                break;
-            }
-        }
-    }
-    free(tmp);
-    return returnv;
 }

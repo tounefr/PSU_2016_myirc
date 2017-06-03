@@ -10,6 +10,7 @@
 
 #include "server.h"
 
+/*
 char
 send_channel_topic(t_client *irc_client,
                    t_channel *irc_channel)
@@ -17,6 +18,7 @@ send_channel_topic(t_client *irc_client,
     dprintf(irc_client->fd, "332 %s #test :Topic to be changed\r\n",
             irc_client->pseudo);
 }
+*/
 
 char
 send_channel_client_list(t_irc_server *irc_server,
@@ -90,8 +92,8 @@ on_join_command(t_irc_server *irc_server,
     generic_list_append(&irc_client->registred_channels, channel);
     dprintf(irc_client->fd, ":%s!~%s@127.0.0.1 JOIN #%s\r\n",
             irc_client->pseudo, irc_client->user, channel_name);
-    dprintf(irc_client->fd, "331 %s #%s :No topic is set\r\n",
-            irc_client->pseudo, channel_name);
+    dprintf(irc_client->fd, ":%s 331 %s #%s :No topic is set\r\n",
+            IRC_SERVER_HOST, irc_client->pseudo, channel_name);
     dprintf(irc_client->fd, ":%s MODE #%s +ns\r\n",
             IRC_SERVER_HOST, channel_name);
     send_channel_client_list(irc_server,irc_client, channel);

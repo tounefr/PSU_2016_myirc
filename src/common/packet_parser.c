@@ -8,14 +8,7 @@
 ** Last update Sun May 28 00:03:26 2017 Thomas HENON
 */
 
-#include <stdlib.h>
-#include "myirc.h"
-
-char
-*packet_get_param(char *packet)
-{
-    strtok(packet, " ");
-}
+#include "server.h"
 
 static char*
 get_ptr_content(char *buffer)
@@ -24,9 +17,8 @@ get_ptr_content(char *buffer)
 
     i = -1;
     while (buffer[++i]) {
-        if (buffer[i] == ' ' && buffer[i + 1] == ':') {
+        if (buffer[i] == ' ' && buffer[i + 1] == ':')
             return &buffer[i + 2];
-        }
     }
     return NULL;
 }
@@ -42,20 +34,24 @@ simple_space_parser(t_packet *packet)
     buffer = strdup_irc_packet(packet->raw);
     tmp = buffer;
     buffer_rm_crlf(buffer);
-    packet->content = NULL;
-    i = -1;
+    i = 0;
     while ((token = strtok(buffer, " "))) {
         buffer = NULL;
-        if (token[0] == ':') {
-            packet->content = my_strdup(get_ptr_content(packet->raw));
-            break;
+         if (token[0] == ':') {
+            if (i == 0)
+                packet->prefix = my_strdup(&token[1]);
+            else {
+                packet->content = my_strdup(get_ptr_content(packet->raw));
+                return 1;
+            }
         }
-        if (++i == 0)
-            packet->cmd = my_strdup(token);
+        else if (i == 0 || (packet->prefix && i == 1))
+             packet->cmd = my_strdup(token);
         else {
-            packet->params[i - 1] = my_strdup(token);
-            packet->nbr_params++;
-        }
+             packet->params[i - 1] = my_strdup(token);
+             packet->nbr_params++;
+         }
+        i++;
     }
 //    free(tmp);
     return 1;

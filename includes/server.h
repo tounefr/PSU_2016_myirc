@@ -48,9 +48,6 @@ typedef struct      s_irc_server
 } t_irc_server;
 
 # define N_COMMAND_CALLBACK 12
-
-# define FLAG_NONE 0
-# define FLAG_LOG_FIRST 1
 typedef struct s_command_callback
 {
     char *cmd;
@@ -156,18 +153,10 @@ on_quit_command(t_irc_server *irc_server,
 char simple_space_parser(t_packet *packet);
 char content_with_spaces_parser(t_packet *packet);
 char *strdup_irc_packet(char *buffer);
-
-// packet.c
-t_packet *init_packet(char *raw);
-void free_packet(t_packet *packet);
-char parse_irc_packet(t_irc_server *irc_server,
-                      t_client *irc_client,
-                      t_packet *packet);
-void packet_set(t_packet *packet, char *cmd, char *content);
-void packet_set_param(t_packet *packet, int i, char *param);
-void packet_set_params(t_packet *packet, int nbr_params, ...);
-char buffer_rm_crlf(char *buffer);
-char send_reply_packet(int fd, t_packet *res);
+char
+parse_irc_packet(t_irc_server *irc_server,
+                 t_client *irc_client,
+                 t_packet *packet);;
 
 // error.c
 void malloc_error();
