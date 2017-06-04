@@ -10,16 +10,6 @@
 
 #include "server.h"
 
-/*
-char
-send_channel_topic(t_client *irc_client,
-                   t_channel *irc_channel)
-{
-    dprintf(irc_client->fd, "332 %s #test :Topic to be changed\r\n",
-            irc_client->pseudo);
-}
-*/
-
 char
 send_channel_client_list(t_irc_server *irc_server,
                          t_client *irc_client,
@@ -84,8 +74,8 @@ on_join_command(t_irc_server *irc_server,
     channel_name = packet->params[0];
     if (!(channel_name = normalize_channel_name(channel_name)))
         return 1;
-    if (!(channel = irc_channel_exists(irc_server, channel_name)))
-        channel = new_irc_channel(irc_server, channel_name);
+    if (!(channel = irc_channel_exists(irc_server->channels, channel_name)))
+        channel = new_irc_channel(&irc_server->channels, channel_name);
     if (client_is_in_channel(channel, irc_client))
         return 1;
     generic_list_append(&channel->clients, irc_client);
@@ -112,16 +102,16 @@ send_msg_channel(t_irc_server *irc_server,
     t_client *client;
 
     if (!(channel_name = normalize_channel_name(packet->params[0])))
-        return 1;
-    if (!(channel = irc_channel_exists(irc_server, channel_name)))
-        return 1;
+        return exit_error(1, "error : normalize_channel_name\n");
+    if (!(channel = irc_channel_exists(irc_server->channels, channel_name)))
+        return exit_error(1, "error : irc_channel_exists\n");
     if (!client_is_in_channel(channel, irc_client))
-        return 1;
+        return exit_error(1, "error : client_is_in_channel\n");
     clients = channel->clients;
     while ((client = generic_list_foreach(clients))) {
         clients = NULL;
-        if (irc_client == client)
-            continue;
+        /*if (irc_client == client)
+            continue;*/
         dprintf(client->fd, ":%s PRIVMSG #%s :%s\r\n",
                 irc_client->pseudo, channel->name, packet->content);
     }

@@ -1,6 +1,12 @@
-//
-// Created by toune on 01/06/17.
-//
+/*
+** cbuffer.h for  in /home/toune/Documents/Epitech/projets/PSU_2016_myirc
+** 
+** Made by Thomas HENON
+** Login   <thomas.henon@epitech.eu>
+** 
+** Started on  Sun Jun  4 12:03:52 2017 Thomas HENON
+** Last update Sun Jun  4 12:03:53 2017 Thomas HENON
+*/
 
 #ifndef PROJETS_CBUFFER_H
 #define PROJETS_CBUFFER_H

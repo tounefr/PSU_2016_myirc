@@ -1,3 +1,12 @@
+/*
+** my_select.c for  in /home/toune/Documents/Epitech/projets/PSU_2016_myirc
+** 
+** Made by Thomas HENON
+** Login   <thomas.henon@epitech.eu>
+** 
+** Started on  Sun Jun  4 12:02:20 2017 Thomas HENON
+** Last update Sun Jun  4 12:02:22 2017 Thomas HENON
+*/
 
 #include "common.h"
 
@@ -15,7 +24,7 @@ init_my_select(t_my_select *server_select)
 
 void
 add_readfd_my_select(t_my_select *server_select,
-                         int fd)
+                     int fd)
 {
     FD_SET(fd, &server_select->readfds);
     if (fd > server_select->nfds)

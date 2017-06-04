@@ -57,4 +57,7 @@ exit_ptr_error(char *returnv,
                char *format,
                ...);
 
+char*
+generate_nickname();
+
 #endif //PROJETS_UTIL_H

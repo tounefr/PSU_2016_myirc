@@ -27,7 +27,9 @@ COMMON_SRCS = src/common/network/socket.c \
               src/common/my_select.c \
               src/common/packet.c \
               src/common/packet2.c \
-              src/common/packet_parser.c
+              src/common/packet_parser.c \
+              src/common/channel.c \
+              src/common/channel2.c
 
 SERVER_SRCS =   $(COMMON_SRCS) \
                 src/server/client.c \
@@ -36,8 +38,6 @@ SERVER_SRCS =   $(COMMON_SRCS) \
                 src/server/server.c \
                 src/server/server_commands.c \
                 src/server/channel_commands.c \
-                src/server/channel.c \
-                src/server/channel2.c \
                 src/server/select.c \
                 src/server/packet.c
 
@@ -45,7 +45,11 @@ CLIENT_SRCS =   $(COMMON_SRCS) \
                 src/client/main.c \
                 src/client/cli_commands.c \
                 src/client/commands.c \
-                src/client/packet.c
+                src/client/packet.c \
+                src/client/channel.c \
+                src/client/cli.c \
+                src/client/client.c \
+                src/client/select.c
 
 SERVER_OBJS = $(SERVER_SRCS:.c=.o)
 CLIENT_OBJS = $(CLIENT_SRCS:.c=.o)

@@ -1,6 +1,12 @@
-//
-// Created by toune on 29/05/17.
-//
+/*
+** generic_list.c for  in /home/toune/Documents/Epitech/projets/PSU_2016_myirc
+** 
+** Made by Thomas HENON
+** Login   <thomas.henon@epitech.eu>
+** 
+** Started on  Sun Jun  4 12:01:59 2017 Thomas HENON
+** Last update Sun Jun  4 12:01:59 2017 Thomas HENON
+*/
 
 #include "generic_list.h"
 

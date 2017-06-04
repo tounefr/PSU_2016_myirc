@@ -1,3 +1,12 @@
+/*
+** generic_list2.c for  in /home/toune/Documents/Epitech/projets/PSU_2016_myirc
+** 
+** Made by Thomas HENON
+** Login   <thomas.henon@epitech.eu>
+** 
+** Started on  Sun Jun  4 12:02:04 2017 Thomas HENON
+** Last update Sun Jun  4 12:02:04 2017 Thomas HENON
+*/
 
 #include <stdlib.h>
 #include "generic_list.h"
@@ -13,7 +22,8 @@ generic_list_foreach(t_generic_list *list)
     if (list)
         save = list;
     returnv = save;
-    save = save->next;
+    if (save)
+        save = save->next;
     return returnv->data;
 }
 

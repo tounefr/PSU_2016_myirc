@@ -43,13 +43,13 @@ on_nick_command(t_irc_server *irc_server,
 
     if (packet->nbr_params == 0)
         return dprintf(irc_client->fd, "431 :No nickname given\r\n");
-    //:cherryh.freenode.net 433 thomas__ tounefr :Nickname is already in use.
     if (check_pseudo_already_used(irc_server, packet->params[0]))
         return dprintf(irc_client->fd,
                        "433 %s %s :Nickname is already in use\r\n",
                        irc_client->pseudo, packet->params[0]);
     dprintf(irc_client->fd, ":%s NICK :%s\r\n",
-            irc_client->pseudo, packet->params[0]);
+            (irc_client->pseudo ? irc_client->pseudo : IRC_SERVER_HOST),
+            packet->params[0]);
     announce_nick_changed(irc_client, packet);
     if (irc_client->pseudo)
         free(irc_client->pseudo);
@@ -73,7 +73,7 @@ on_user_command(t_irc_server *irc_server,
 {
     t_packet *res;
 
-    if (packet->nbr_params != 3)
+    if (packet->nbr_params < 3)
         return dprintf(irc_client->fd, ":%s 461 :Not enough parameters\r\n",
                        IRC_SERVER_HOST);
     irc_client->user = my_strdup(packet->params[0]);

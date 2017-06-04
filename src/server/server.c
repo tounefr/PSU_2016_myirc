@@ -107,7 +107,7 @@ char
 start_irc_server(t_irc_server *irc_server)
 {
     t_my_select ss;
-    int             retrv;
+    int retrv;
 
     if (!init_irc_server(irc_server))
         return 0;

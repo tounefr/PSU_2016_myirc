@@ -11,7 +11,7 @@
 #include "server.h"
 
 t_channel*
-new_irc_channel(t_irc_server *irc_server, char *name)
+new_irc_channel(t_channels_list **channels, char *name)
 {
     t_channel *irc_channel;
 
@@ -21,40 +21,15 @@ new_irc_channel(t_irc_server *irc_server, char *name)
     irc_channel->clients = NULL;
     irc_channel->op = NULL;
     irc_channel->topic = my_strdup("Mon super topic");
-    generic_list_append(&irc_server->channels, irc_channel);
+    generic_list_append(channels, irc_channel);
     return irc_channel;
 }
 
-char*
-normalize_channel_name(char *channel)
-{
-    int i;
-
-    if (!channel)
-        return NULL;
-    if (channel[0] == '&' || channel[0] == '#')
-        channel++;
-    if (strlen(channel) > 200)
-        return exit_ptr_error(0, "channel name > 200\n");
-    i = -1;
-    while (channel[++i]) {
-        if (channel[i] < 0 || channel[i] > 255 ||
-            channel[i] == 7 || channel[i] == ' ')
-            return exit_ptr_error(NULL, "wrong channel name\n");
-    }
-    channel = my_strdup(channel);
-    return channel;
-}
-
 t_channel*
-irc_channel_exists(t_irc_server *irc_server, char *name)
+irc_channel_exists(t_channels_list *channels, char *name)
 {
-    t_channels_list *channels;
     t_channel *channel;
 
-    if (!name)
-        return NULL;
-    channels = irc_server->channels;
     while ((channel = generic_list_foreach(channels))) {
         channels = NULL;
         if (channel->name && !strcmp(channel->name, name))

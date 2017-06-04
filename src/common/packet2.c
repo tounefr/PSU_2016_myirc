@@ -32,7 +32,10 @@ buffer_rm_crlf(char *buffer)
 # define FLAG_APPND_COMMA 2
 
 static void
-cpy_buff(char *buffer, int *off, char *content, char flag)
+cpy_buff(char *buffer,
+         int *off,
+         char *content,
+         char flag)
 {
     if (flag & FLAG_APPND_COMMA) {
         strcpy(&buffer[*off], ":");
@@ -47,7 +50,8 @@ cpy_buff(char *buffer, int *off, char *content, char flag)
 }
 
 char
-send_reply_packet(int fd, t_packet *res)
+send_reply_packet(int fd,
+                  t_packet *res)
 {
     char buffer[IRC_PACKET_SIZE + 1];
     int i;
@@ -72,7 +76,9 @@ send_reply_packet(int fd, t_packet *res)
 }
 
 void
-packet_set_params(t_packet *packet, int nbr_params, ...)
+packet_set_params(t_packet *packet,
+                  int nbr_params,
+                  ...)
 {
     int i;
     va_list args;

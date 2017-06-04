@@ -1,6 +1,12 @@
-//
-// Created by toune on 01/06/17.
-//
+/*
+** common.h for  in /home/toune/Documents/Epitech/projets/PSU_2016_myirc
+** 
+** Made by Thomas HENON
+** Login   <thomas.henon@epitech.eu>
+** 
+** Started on  Sun Jun  4 12:04:20 2017 Thomas HENON
+** Last update Sun Jun  4 12:04:20 2017 Thomas HENON
+*/
 
 #ifndef PROJETS_COMMON_H
 #define PROJETS_COMMON_H
@@ -49,5 +55,26 @@ char
 *strdup_irc_packet(char *buffer);
 char
 simple_space_parser(t_packet *packet);
+
+char*
+normalize_channel_name(char *channel);
+
+typedef struct s_client t_client;
+typedef struct      s_channel
+{
+    char            *name;
+    char            *topic;
+    int             max_clients;
+    t_clients_list  *clients;
+    t_client    *op;
+} t_channel;
+
+t_channel*
+new_irc_channel(t_channels_list **channels, char *name);
+char* normalize_channel_name(char *channel);
+t_channel *irc_channel_exists(t_channels_list *channels, char *name);
+
+char
+*parse_packet_prefix_dst(t_packet *packet);
 
 #endif //PROJETS_COMMON_H

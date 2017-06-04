@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <time.h>
 #include <string.h>
 #include "util.h"
 
@@ -61,4 +62,42 @@ char
     if (!(str = strdup(str)))
         malloc_error();
     return str;
+}
+
+char*
+normalize_channel_name(char *channel)
+{
+    int i;
+
+    if (!channel)
+        return NULL;
+    if (channel[0] == '&' || channel[0] == '#')
+        channel++;
+    if (strlen(channel) > 200)
+        return exit_ptr_error(0, "channel name > 200\n");
+    i = -1;
+    while (channel[++i]) {
+        if (channel[i] < 0 || channel[i] > 255 ||
+            channel[i] == 7 || channel[i] == ' ')
+            return exit_ptr_error(NULL, "wrong channel name\n");
+    }
+    channel = my_strdup(channel);
+    return channel;
+}
+
+char*
+generate_nickname()
+{
+    static char init_srand = 0;
+    char *nickname;
+    int rand_num;
+
+    if (!init_srand) {
+        srand(time(NULL));
+        init_srand = 1;
+    }
+    nickname = my_malloc(100);
+    rand_num = rand() % 10001;
+    snprintf(nickname, 99, "Guest%d", rand_num);
+    return nickname;
 }
