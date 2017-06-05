@@ -23,25 +23,24 @@ t_cli_command_callback cli_commands_callbacks[N_CLI_COMMAND_CALLBACK] =
     { "accept_file", on_accept_file_cli_command, FLAG_LOG_FIRST }
 };
 
-char
-split_host_port(char *host_port,
-                char **host,
-                unsigned short *port)
+static char
+split_it(char *host_port, char **host, unsigned short *port)
 {
     char *tmp;
     int i;
     char *param;
-    char returnv;
+    int returnv;
 
-    returnv = 1;
     i = 0;
     host_port = my_strdup(host_port);
     tmp = host_port;
+    returnv = 1;
+    *port = DEFAULT_SERVER_PORT;
     while ((param = strtok(host_port, ":"))) {
         host_port = NULL;
         if (i == 0)
             *host = my_strdup(param);
-        else if (i == 1)
+        else if (i == 1 && is_number(param))
             *port = atoi(param);
         else {
             returnv = 0;
@@ -49,16 +48,29 @@ split_host_port(char *host_port,
         }
         i++;
     }
-    if (i != 2)
-        returnv = 0;
     free(tmp);
     return returnv;
+}
+
+char
+split_host_port(char *host_port,
+                char **host,
+                unsigned short *port)
+{
+    char returnv;
+    char *hostname;
+
+    if (!split_it(host_port, host, port))
+        return 0;
+    hostname = *host;
+    if (!is_ipv4(*host) && !(*host = resolve_hostname(*host)))
+        return exit_error(0, "Failed to fetch %s\n", hostname);
+    return 1;
 }
 
 void
 identify_me(t_irc_client *irc_client, char *nickname)
 {
-    //generate_nickname
     dprintf(irc_client->fd, "NICK %s\r\n", nickname);
     dprintf(irc_client->fd, "USER %s %s %s :%s\r\n",
             nickname, "127.0.0.1",
@@ -74,18 +86,16 @@ on_server_cli_command(t_irc_client *irc_client,
     unsigned short port;
 
     if (irc_client->logged)
-        return printf("Vous êtes déjà connecté\n");
+        return disp_message(INFO_LEVEL, "Vous êtes déjà connecté");
     if (!(host_port = cmd_get_param(cmd, 1)))
-        exit_error(0, "error\n");
+        return exit_error(0, "error\n");
     if (!split_host_port(host_port, &host, &port))
-        exit_error(0, "error\n");
-    printf("Tentative de connexion vers %s:%d ...\n", host, port);
-    if (!socket_connect(&irc_client->fd, host, &port)) {
-        printf("Impossible de se connecter\n");
-        return 1;
-    }
+        return exit_error(0, "error\n");
+    disp_message(INFO_LEVEL, "Tentative de connexion vers %s:%d ...", host, port);
+    if (!socket_connect(&irc_client->fd, host, &port))
+        return disp_message(WARN_LEVEL, "Impossible de se connecter");
     irc_client->logged = 1;
-    printf("Connecté !\n");
+    disp_message(INFO_LEVEL, "Connecté !");
     identify_me(irc_client, generate_nickname());
     return 1;
 }
@@ -97,7 +107,7 @@ on_nick_cli_command(t_irc_client *irc_client,
     char *nickname;
 
     if (!(nickname = cmd_get_param(cmd, 1)))
-        exit_error(0, "error\n");
+        return exit_error(0, "error\n");
     identify_me(irc_client, nickname);
     return 1;
 }
@@ -106,7 +116,15 @@ char
 on_list_cli_command(t_irc_client *irc_client,
                     char *cmd)
 {
+    char *channel_name;
 
+    if ((channel_name = cmd_get_param(cmd, 1))) {
+        if (!(channel_name = normalize_channel_name(channel_name)))
+            return exit_error(0, "normalize_channel_name\n");
+        return dprintf(irc_client->fd, "LIST #%s\r\n", channel_name);
+    }
+    else
+        return dprintf(irc_client->fd, "LIST\r\n");
 }
 
 char
@@ -116,9 +134,13 @@ on_join_cli_command(t_irc_client *irc_client,
     char *channel;
 
     if (!(channel = cmd_get_param(cmd, 1)))
-        exit_error(0, "error\n");
+        return exit_error(0, "error\n");
     if (!(channel = normalize_channel_name(channel)))
-        exit_error(0, "error\n");
+        return exit_error(0, "error\n");
+    if (irc_client->cur_channel)
+        return disp_message(INFO_LEVEL,
+                            "Vous ne pouvez pas être connecté "
+                            "à 2 channels en même temps");
     dprintf(irc_client->fd, "JOIN #%s\r\n", channel);
     return 1;
 }
@@ -127,33 +149,14 @@ char
 on_part_cli_command(t_irc_client *irc_client,
                     char *cmd)
 {
+    char *channel_name;
 
-}
-
-char
-on_users_cli_command(t_irc_client *irc_client,
-                     char *cmd)
-{
-
-}
-
-char
-on_names_cli_command(t_irc_client *irc_client,
-                     char *cmd)
-{
-
-}
-
-char
-on_msg_cli_command(t_irc_client *irc_client,
-                   char *cmd)
-{
-
-}
-
-char
-on_accept_file_cli_command(t_irc_client *irc_client,
-                           char *cmd)
-{
-
+    if (!(channel_name = cmd_get_param(cmd, 1)))
+        return exit_error(0, "error\n");
+    if (!(channel_name = normalize_channel_name(channel_name)))
+        return exit_error(0, "error\n");
+    if (!irc_client->cur_channel ||
+            strcmp(irc_client->cur_channel->name, channel_name))
+        return exit_error(0, "Vous n'êtes pas connecté à ce channel\n");
+    dprintf(irc_client->fd, "PART #%s\r\n", irc_client->cur_channel->name);
 }

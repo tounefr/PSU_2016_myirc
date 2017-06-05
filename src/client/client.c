@@ -26,7 +26,7 @@ init_irc_client(t_irc_client *irc_client)
 void
 on_disconnect(t_irc_client *irc_client)
 {
-    printf("Disconnected\n");
+    disp_message(INFO_LEVEL, "Disconnected");
     irc_client->logged = 0;
 }
 
@@ -60,7 +60,7 @@ on_network_data(t_irc_client *irc_client)
                                   IRC_PACKET_SIZE,
                                   "\r\n"))) {
         packet = init_packet(raw);
-        printf("Recv << %s", raw);
+        disp_message(DEBUG_LEVEL, "Recv << %s", raw);
         returnv = parse_irc_packet(irc_client, packet);
         free_packet(packet);
     }

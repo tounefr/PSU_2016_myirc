@@ -22,6 +22,8 @@ typedef struct s_socket_infos
 
 void
 free_socket_infos(t_socket_infos *socket_infos);
+char*
+resolve_hostname(char *host);
 char socket_init(int *fd);
 char socket_connect(int *fd, char *ip, unsigned short *port);
 char socket_infos(int *socket_fd, t_socket_infos *socket_infos);

@@ -24,9 +24,15 @@
 # define IRC_PACKET_NBR_PARAMS 15
 # define IRC_CHANNEL_MAX_CLIENTS 100
 # define IRC_SERVER_HOST "irc.lan"
+# define DEFAULT_SERVER_PORT 6667
 
 # define FLAG_NONE 0
 # define FLAG_LOG_FIRST 1
+
+# define INFO_LEVEL 0
+# define ERR_LEVEL 1
+# define WARN_LEVEL 2
+# define DEBUG_LEVEL 3
 
 typedef t_generic_list t_channels_list;
 typedef t_generic_list t_clients_list;
@@ -76,5 +82,23 @@ t_channel *irc_channel_exists(t_channels_list *channels, char *name);
 
 char
 *parse_packet_prefix_dst(t_packet *packet);
+
+char*
+get_prompt_date();
+
+/*
+char
+on_cli_data(t_irc_client *irc_client);*/
+
+char
+disp_channel_message(char *pseudo,
+                     char *channel,
+                     char *message);
+
+char
+disp_message(char level, const char *message, ...);
+
+char
+is_ipv4(char *str);
 
 #endif //PROJETS_COMMON_H

@@ -110,8 +110,8 @@ send_msg_channel(t_irc_server *irc_server,
     clients = channel->clients;
     while ((client = generic_list_foreach(clients))) {
         clients = NULL;
-        /*if (irc_client == client)
-            continue;*/
+        if (irc_client == client)
+            continue;
         dprintf(client->fd, ":%s PRIVMSG #%s :%s\r\n",
                 irc_client->pseudo, channel->name, packet->content);
     }

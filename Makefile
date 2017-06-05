@@ -33,7 +33,9 @@ COMMON_SRCS = src/common/network/socket.c \
 
 SERVER_SRCS =   $(COMMON_SRCS) \
                 src/server/client.c \
+                src/server/client2.c \
                 src/server/commands.c \
+                src/server/commands2.c \
                 src/server/main.c \
                 src/server/server.c \
                 src/server/server_commands.c \
@@ -44,10 +46,14 @@ SERVER_SRCS =   $(COMMON_SRCS) \
 CLIENT_SRCS =   $(COMMON_SRCS) \
                 src/client/main.c \
                 src/client/cli_commands.c \
+                src/client/cli_commands2.c \
                 src/client/commands.c \
+                src/client/commands2.c \
+                src/client/commands3.c \
                 src/client/packet.c \
                 src/client/channel.c \
                 src/client/cli.c \
+                src/client/cli2.c \
                 src/client/client.c \
                 src/client/select.c
 

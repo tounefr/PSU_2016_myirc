@@ -53,12 +53,6 @@ debug_packet(t_packet *packet)
 }
 
 char
-parse_prefix(t_packet *packet, char *prefix)
-{
-
-}
-
-char
 simple_space_parser(t_packet *packet)
 {
     char *token;

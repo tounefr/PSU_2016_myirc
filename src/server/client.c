@@ -72,3 +72,21 @@ check_pseudo_already_used(t_irc_server *irc_server,
     }
     return 0;
 }
+
+char
+on_exit_client(t_irc_server *irc_server,
+               t_client *irc_client)
+{
+    t_channels_list *channels_list;
+    t_channel *channel;
+
+    channels_list = irc_client->registred_channels;
+    while ((channel = generic_list_foreach(channels_list))) {
+        channels_list = NULL;
+        announce_channel_client_part(irc_client, channel);
+        generic_list_remove(&channel->clients, irc_client, NULL);
+    }
+    socket_close(&irc_client->fd);
+    generic_list_remove(&irc_server->irc_clients, irc_client, NULL);//TODO: fix NULL
+    return 1;
+}

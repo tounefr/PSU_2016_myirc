@@ -37,52 +37,6 @@ on_server_new_client(t_irc_server *irc_server)
 }
 
 char
-on_exit_client(t_irc_server *irc_server,
-               t_client *irc_client)
-{
-    t_channels_list *channels_list;
-    t_channel *channel;
-
-    channels_list = irc_client->registred_channels;
-    while ((channel = generic_list_foreach(channels_list))) {
-        channels_list = NULL;
-        announce_channel_client_part(irc_client, channel);
-        generic_list_remove(&channel->clients, irc_client, NULL);
-    }
-    socket_close(&irc_client->fd);
-    generic_list_remove(&irc_server->irc_clients, irc_client, NULL);//TODO: fix NULL
-    return 1;
-}
-
-char
-on_client_data(t_irc_server *irc_server,
-               t_client *irc_client)
-{
-    char        buffer[BUFFER_SIZE];
-    int         readv;
-    char        *raw;
-    t_packet    *packet;
-    char        returnv;
-
-    if ((readv = read(irc_client->fd, buffer, BUFFER_SIZE)) <= 0) {
-        on_exit_client(irc_server, irc_client);
-        printf("client exit\n");
-        return 0;
-    }
-    cbuffer_copy(irc_client->cbuffer, buffer, readv);
-    //EXIT_ERROR(0, "cbuffer_extract failed\n")
-    while ((raw = cbuffer_extract(irc_client->cbuffer,
-                                  IRC_PACKET_SIZE,
-                                  "\r\n"))) {
-        packet = init_packet(raw);
-        printf("Recv << %s", raw);
-        returnv = parse_irc_packet(irc_server, irc_client, packet);
-        free_packet(packet);
-    }
-    return 1;
-}
-
-char
 server_select_on_data(t_my_select *ss,
                       t_irc_server *irc_server)
 {

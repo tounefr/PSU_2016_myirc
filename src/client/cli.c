@@ -29,6 +29,48 @@ cmd_get_param(char *cmd,
 }
 
 char
+disp_channel_message(char *pseudo,
+                     char *channel,
+                     char *message)
+{
+    char *date_prompt;
+
+    date_prompt = get_prompt_date();
+    printf("%s [#%s] <%s>: %s\n",
+           date_prompt, channel,
+            pseudo, message);
+    free(date_prompt);
+}
+
+char
+disp_message(char level,
+             const char *message,
+             ...)
+{
+    va_list args;
+
+    va_start(args, message);
+    printf("[INFO]: ");
+    vprintf(message, args);
+    printf("\n");
+    va_end(args);
+}
+
+char*
+get_prompt_date()
+{
+    time_t rawtime;
+    struct tm *info;
+    char *date_buffer;
+
+    date_buffer = my_malloc(100);
+    time(&rawtime);
+    info = localtime(&rawtime);
+    strftime(date_buffer, 99, "%d/%m/%Y %H:%M", info);
+    return date_buffer;
+}
+
+char
 parse_cli_command(char *command,
                   t_irc_client *irc_client)
 {
@@ -40,30 +82,11 @@ parse_cli_command(char *command,
                      &command[1], strlen(cli_commands_callbacks[i].cmd))) {
             if ((cli_commands_callbacks[i].flags & FLAG_LOG_FIRST) &&
                 !irc_client->logged) {
-                printf("Log first\n");
-                return 1;
+                return disp_message(WARN_LEVEL, "Log first");
             } else
                 return cli_commands_callbacks[i].callback(irc_client, command);
         }
     }
-    printf("Unknown command\n");
-    return 1;
-}
-
-char
-on_cli_data(t_irc_client *irc_client)
-{
-    char *line;
-    size_t n;
-
-//    printf("on_cli_data\n");
-    if ((getline(&line, &n, stdin)) != -1) {
-        if (line[0] == '/') {
-            if (!parse_cli_command(line, irc_client))
-                printf("Failed to parse command\n");
-        }
-        else
-            send_channel_msg(line, irc_client);
-    }
+    disp_message(ERR_LEVEL, "Unknown command");
     return 1;
 }

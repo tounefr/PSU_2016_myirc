@@ -14,6 +14,7 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 #include "common.h"
 
@@ -70,7 +71,7 @@ char
 on_join_command(t_irc_client *client,
                 t_packet *packet);
 
-# define N_COMMAND_CALLBACK 12
+# define N_COMMAND_CALLBACK 13
 typedef struct s_command_callback
 {
     char *cmd;
@@ -79,6 +80,10 @@ typedef struct s_command_callback
     char flags;
 } t_command_callback;
 extern t_command_callback commands_callbacks[N_COMMAND_CALLBACK];
+
+char
+on_RPL_LISTSTART_command(t_irc_client *client,
+                         t_packet *packet);
 
 char
 on_JOIN_command(t_irc_client *client,

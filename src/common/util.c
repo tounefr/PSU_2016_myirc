@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <time.h>
 #include <string.h>
 #include "util.h"
 
@@ -64,40 +63,30 @@ char
     return str;
 }
 
-char*
-normalize_channel_name(char *channel)
+char
+is_ipv4(char *str)
 {
     int i;
+    int i2;
+    int i3;
 
-    if (!channel)
-        return NULL;
-    if (channel[0] == '&' || channel[0] == '#')
-        channel++;
-    if (strlen(channel) > 200)
-        return exit_ptr_error(0, "channel name > 200\n");
     i = -1;
-    while (channel[++i]) {
-        if (channel[i] < 0 || channel[i] > 255 ||
-            channel[i] == 7 || channel[i] == ' ')
-            return exit_ptr_error(NULL, "wrong channel name\n");
+    i2 = 0;
+    i3 = 0;
+    while (str[++i]) {
+        if ((str[i] < '0' || str[i] > '9') && str[i] != '.')
+            return 0;
+        if (i >= 1 && str[i] == '.' &&
+                (str[i - 1] == '.' || str[i + 1] == '.'))
+            return 0;
+        if (str[i] == '.') {
+            i2++;
+            i3 = 0;
+        }
+        if (str[i] >= '0' && str[i] <= '9')
+            i3++;
+        if (i2 > 3 || i3 > 3)
+            return 0;
     }
-    channel = my_strdup(channel);
-    return channel;
-}
-
-char*
-generate_nickname()
-{
-    static char init_srand = 0;
-    char *nickname;
-    int rand_num;
-
-    if (!init_srand) {
-        srand(time(NULL));
-        init_srand = 1;
-    }
-    nickname = my_malloc(100);
-    rand_num = rand() % 10001;
-    snprintf(nickname, 99, "Guest%d", rand_num);
-    return nickname;
+    return 1;
 }
