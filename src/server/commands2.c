@@ -26,9 +26,8 @@ on_list_command(t_irc_server *irc_server,
                     irc_client->pseudo, channel->name, channel->topic);
         }
     }
-    dprintf(irc_client->fd, ":%s 323 %s :End of /LIST\r\n",
+    return dprintf(irc_client->fd, ":%s 323 %s :End of /LIST\r\n",
             IRC_SERVER_HOST, irc_client->pseudo);
-    return 1;
 }
 
 char
@@ -41,8 +40,6 @@ announce_channel_client_part(t_client *irc_client,
     clients_in_channel = irc_channel->clients;
     while ((client_in_channel = generic_list_foreach(clients_in_channel))) {
         clients_in_channel = NULL;
-        //thomas__!~thomas@163.5.141.79 PART #test
-        //:thomas!~thomas@163.5.141.79 PART #test
         dprintf(client_in_channel->fd, ":%s!~%s@127.0.0.1 PART #%s\r\n",
                 irc_client->pseudo, irc_client->pseudo, irc_channel->name);
     }
@@ -72,7 +69,8 @@ on_part_command(t_irc_server *irc_server,
             generic_list_remove(&irc_client->registred_channels,
                                 channel, NULL);
             if (generic_list_count(channel->clients) == 0)
-                generic_list_remove(&irc_server->channels, channel, free_channel);
+                generic_list_remove(&irc_server->channels, channel,
+                                    free_channel);
             return 1;
         }
     }

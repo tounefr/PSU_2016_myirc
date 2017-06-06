@@ -11,6 +11,7 @@
 #include "util.h"
 #include "cbuffer.h"
 
+/*
 char
 *cbuffer_extract(t_circular_buffer *cbuffer,
                  int packet_size,
@@ -27,9 +28,10 @@ char
     start = cbuffer->cur_off;
     cur = start;
     end = cur + cbuffer->size;
+
     while (cur < end - 1) {
         packet[packet_i++] = cbuffer_get_char_at(cbuffer, cur);
-        cbuffer_set_char_at(cbuffer, packet_i - 1, '\0');
+        cbuffer_set_char_at(cbuffer, cur % cbuffer->size, '\0');
         if (packet_i >= 2 &&
             (packet[packet_i - 2] == '\r' &&
              packet[packet_i - 1] == '\n')) {
@@ -41,6 +43,31 @@ char
     free(packet);
     return NULL;
 }
+*/
+
+char
+*cbuffer_extract(t_circular_buffer *cbuffer,
+                 int packet_size,
+                 char *delim)
+{
+    int i;
+    char *packet;
+
+    packet = my_malloc(packet_size + 1);
+    for (i = 0; i < packet_size; i++) {
+        packet[i] = cbuffer_get_char_at(cbuffer, cbuffer->cur_off + i);
+        if (i >= 2 && packet[i] == '\n' && packet[i - 1] == '\r') {
+
+            for (int i2 = 0; i2 <= i; i2++)
+                cbuffer_set_char_at(cbuffer, cbuffer->cur_off + i2, 0);
+
+            cbuffer->cur_off += (i + 1) % cbuffer->size;
+            return packet;
+        }
+    }
+    free(packet);
+    return NULL;
+}
 
 void
 cbuffer_copy(t_circular_buffer *cbuffer,
@@ -48,15 +75,10 @@ cbuffer_copy(t_circular_buffer *cbuffer,
              int buff_size)
 {
     int i;
-    int i2;
 
-    i = 0;
-    i2 = cbuffer->cur_off;
-    while (buff_size >= 0) {
-        if (cbuffer->cur_off >= cbuffer->size)
-            cbuffer->cur_off = 0;
-        cbuffer->buffer[i2++] = buff[i++];
-//        cbuffer_set_char_at(cbuffer->buffer, i2++, buff[i++]);
-        buff_size--;
-    }
+    i = -1;
+    while (++i < buff_size)
+        cbuffer_set_char_at(cbuffer,
+                            cbuffer->cur_off + i,
+                            buff[i % buff_size]);
 }

@@ -43,7 +43,7 @@ disp_channel_message(char *pseudo,
 }
 
 char
-disp_message(char level,
+disp_message(char type,
              const char *message,
              ...)
 {

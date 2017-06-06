@@ -41,11 +41,13 @@ on_JOIN_command(t_irc_client *client,
     char *channel_name;
     char *nick_dst;
 
-    if (!packet->params[0] || !packet->prefix)
+    printf("%p\n", client->nickname);
+    if (!packet->params[0] || !packet->prefix || !client->nickname)
         return 0;
     if (!(channel_name = normalize_channel_name(packet->params[0])))
         return 0;
     nick_dst = parse_packet_prefix_dst(packet);
+    printf("nick_dst = %s\n", nick_dst);
     if (!client->cur_channel && !strcmp(nick_dst, client->nickname))
         client->cur_channel = new_irc_channel(&client->registrated_channels,
                                           channel_name);

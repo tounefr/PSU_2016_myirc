@@ -75,7 +75,7 @@ simple_space_parser(t_packet *packet)
         }
         else if (!packet->cmd)
             packet->cmd = my_strdup(token);
-        else
+        else if (packet->nbr_params < IRC_PACKET_NBR_PARAMS)
             packet->params[packet->nbr_params++] = my_strdup(token);
         i++;
     }

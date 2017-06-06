@@ -16,6 +16,8 @@ match_packet_code(int code,
 {
     char code_str[10];
 
+    if (!cmd)
+        return 0;
     memset(code_str, 0, sizeof(code_str));
     if (code < 0)
         strcpy(code_str, "-1");
@@ -40,5 +42,6 @@ parse_irc_packet(t_irc_client *irc_client,
                 (cmd_call->cmd && !strcmp(cmd_call->cmd, packet->cmd)))
             return cmd_call->callback(irc_client, packet);
     }
+    return 1;
     return exit_error(0, "Unknown packet\n");
 }

@@ -18,8 +18,7 @@ init_irc_client(t_irc_client *irc_client)
     irc_client->nickname = NULL;
     irc_client->logged = 0;
     irc_client->cur_channel = NULL;
-    if (!socket_init(&irc_client->fd))
-        return 0;
+    irc_client->fd = -1;
     return 1;
 }
 
@@ -44,7 +43,7 @@ client_select_on_data(t_irc_client *irc_client)
 char
 on_network_data(t_irc_client *irc_client)
 {
-    char        buffer[BUFFER_SIZE];
+    char        buffer[BUFFER_SIZE + 1];
     int         readv;
     char        *raw;
     t_packet    *packet;
@@ -54,7 +53,18 @@ on_network_data(t_irc_client *irc_client)
         on_disconnect(irc_client);
         return 1;
     }
+  //  printf("packet_raw : %s\n", buffer);
+    /*
+    for (int i = 0; i < readv; i++) {
+        printf("%c[%d] ", buffer[i], buffer[i]);
+    }
+    printf("\n");
+     */
     cbuffer_copy(irc_client->cbuffer, buffer, readv);
+//    cbuffer_debug(irc_client->cbuffer);
+
+//    printf("packet : %s\n", irc_client->cbuffer->buffer);
+
     //EXIT_ERROR(0, "cbuffer_extract failed\n")
     while ((raw = cbuffer_extract(irc_client->cbuffer,
                                   IRC_PACKET_SIZE,

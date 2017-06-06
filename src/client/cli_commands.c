@@ -91,8 +91,10 @@ on_server_cli_command(t_irc_client *irc_client,
         return exit_error(0, "error\n");
     if (!split_host_port(host_port, &host, &port))
         return exit_error(0, "error\n");
-    disp_message(INFO_LEVEL, "Tentative de connexion vers %s:%d ...", host, port);
-    if (!socket_connect(&irc_client->fd, host, &port))
+    disp_message(INFO_LEVEL, "Tentative de connexion vers %s:%d ...",
+                 host, port);
+    if (!socket_init(&irc_client->fd) ||
+        !socket_connect(&irc_client->fd, host, &port))
         return disp_message(WARN_LEVEL, "Impossible de se connecter");
     irc_client->logged = 1;
     disp_message(INFO_LEVEL, "Connecté !");
@@ -155,6 +157,7 @@ on_part_cli_command(t_irc_client *irc_client,
         return exit_error(0, "error\n");
     if (!(channel_name = normalize_channel_name(channel_name)))
         return exit_error(0, "error\n");
+    printf("%s %s\n", irc_client->cur_channel->name, channel_name);
     if (!irc_client->cur_channel ||
             strcmp(irc_client->cur_channel->name, channel_name))
         return exit_error(0, "Vous n'êtes pas connecté à ce channel\n");

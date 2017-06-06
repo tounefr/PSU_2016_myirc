@@ -39,13 +39,11 @@ cbuffer_debug(t_circular_buffer *cbuffer)
     int i;
 
     i = -1;
-    printf("off : %d\n", cbuffer->cur_off);
     printf("Buffer : \n");
-    printf("%s", cbuffer->buffer);
     while (++i < cbuffer->size) {
-        printf("%d ", cbuffer->buffer[i]);
+        printf("%c", cbuffer_get_char_at(cbuffer, cbuffer->cur_off + i));
     }
-    printf("\n");
+    printf("\n\n");
 }
 
 char

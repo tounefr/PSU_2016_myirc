@@ -36,6 +36,7 @@ on_PART_command(t_irc_client *client,
     char *nick_src;
     char *channel_name;
 
+    printf("on_PART_command\n");
     if (!packet->prefix || !packet->params[0])
         return 0;
     if (!(channel_name = normalize_channel_name(packet->params[0])))
@@ -47,4 +48,6 @@ on_PART_command(t_irc_client *client,
         return 1;
     }
     disp_message(INFO_LEVEL, "%s a quitté le channel #%s", nick_src, channel_name);
+    //TODO: free channel
+    client->cur_channel = NULL;
 }
