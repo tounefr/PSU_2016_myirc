@@ -73,8 +73,9 @@ identify_me(t_irc_client *irc_client, char *nickname)
 {
     dprintf(irc_client->fd, "NICK %s\r\n", nickname);
     dprintf(irc_client->fd, "USER %s %s %s :%s\r\n",
-            nickname, "127.0.0.1",
-            IRC_SERVER_HOST, "real name");
+            nickname, nickname,
+            "127.0.0.1", nickname);
+    irc_client->nickname = my_strdup(nickname);
 }
 
 char
@@ -110,7 +111,7 @@ on_nick_cli_command(t_irc_client *irc_client,
 
     if (!(nickname = cmd_get_param(cmd, 1)))
         return exit_error(0, "error\n");
-    identify_me(irc_client, nickname);
+    dprintf(irc_client->fd, "NICK %s\r\n", nickname);
     return 1;
 }
 

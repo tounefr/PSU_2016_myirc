@@ -43,11 +43,13 @@ on_PART_command(t_irc_client *client,
         return 0;
     nick_src = parse_packet_prefix_dst(packet);
     if (!strcmp(nick_src, client->nickname)) {
-        disp_message(INFO_LEVEL, "Vous avez quitté le channel #%s", channel_name);
+        disp_message(INFO_LEVEL, "Vous avez quitté le channel #%s",
+                     channel_name);
         client->cur_channel = NULL;
         return 1;
     }
-    disp_message(INFO_LEVEL, "%s a quitté le channel #%s", nick_src, channel_name);
+    disp_message(INFO_LEVEL, "%s a quitté le channel #%s",
+                 nick_src, channel_name);
     //TODO: free channel
     client->cur_channel = NULL;
 }

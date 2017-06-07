@@ -53,19 +53,7 @@ on_network_data(t_irc_client *irc_client)
         on_disconnect(irc_client);
         return 1;
     }
-  //  printf("packet_raw : %s\n", buffer);
-    /*
-    for (int i = 0; i < readv; i++) {
-        printf("%c[%d] ", buffer[i], buffer[i]);
-    }
-    printf("\n");
-     */
     cbuffer_copy(irc_client->cbuffer, buffer, readv);
-//    cbuffer_debug(irc_client->cbuffer);
-
-//    printf("packet : %s\n", irc_client->cbuffer->buffer);
-
-    //EXIT_ERROR(0, "cbuffer_extract failed\n")
     while ((raw = cbuffer_extract(irc_client->cbuffer,
                                   IRC_PACKET_SIZE,
                                   "\r\n"))) {

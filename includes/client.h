@@ -71,7 +71,7 @@ char
 on_join_command(t_irc_client *client,
                 t_packet *packet);
 
-# define N_COMMAND_CALLBACK 13
+# define N_COMMAND_CALLBACK 14
 typedef struct s_command_callback
 {
     char *cmd;
@@ -84,6 +84,10 @@ extern t_command_callback commands_callbacks[N_COMMAND_CALLBACK];
 char
 on_RPL_LISTSTART_command(t_irc_client *client,
                          t_packet *packet);
+
+char
+on_PING_command(t_irc_client *client,
+                t_packet *packet);
 
 char
 on_JOIN_command(t_irc_client *client,

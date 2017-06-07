@@ -17,6 +17,7 @@ t_command_callback commands_callbacks[N_COMMAND_CALLBACK] =
     { "NICK", -1, on_NICK_command, FLAG_NONE },
     { "MODE", -1, on_MODE_command, FLAG_NONE },
     { "JOIN", -1, on_JOIN_command, FLAG_NONE },
+    { "PING", -1, on_PING_command, FLAG_NONE },
     { "PRIVMSG", -1, on_PRIVMSG_command, FLAG_NONE },
     { "RPL_CHANNELMODEIS", 324, on_RPL_CHANNELMODEIS_command, FLAG_NONE },
     { "RPL_LIST", 322, on_RPL_LIST_command, FLAG_NONE },
@@ -26,6 +27,15 @@ t_command_callback commands_callbacks[N_COMMAND_CALLBACK] =
     { "ERR_NICKNAMEINUSE", 433, on_ERR_NICKNAMEINUSE_command, FLAG_NONE },
     { "ERR_NOSUCHNICK", 403, on_ERR_NOSUCHNICK_command, FLAG_NONE }
 };
+
+char
+on_PING_command(t_irc_client *client,
+                t_packet *packet)
+{
+    if (!packet->content)
+        return 0;
+    dprintf(client->fd, "PONG :%s\r\n", packet->content);
+}
 
 char
 on_RPL_LISTSTART_command(t_irc_client *client,
@@ -41,13 +51,13 @@ on_JOIN_command(t_irc_client *client,
     char *channel_name;
     char *nick_dst;
 
-    printf("%p\n", client->nickname);
-    if (!packet->params[0] || !packet->prefix || !client->nickname)
+    if ((!packet->params[0] && !packet->content) ||
+            !packet->prefix || !client->nickname)
         return 0;
-    if (!(channel_name = normalize_channel_name(packet->params[0])))
+    channel_name = packet->params[0] ? packet->params[0] : packet->content;
+    if (!(channel_name = normalize_channel_name(channel_name)))
         return 0;
     nick_dst = parse_packet_prefix_dst(packet);
-    printf("nick_dst = %s\n", nick_dst);
     if (!client->cur_channel && !strcmp(nick_dst, client->nickname))
         client->cur_channel = new_irc_channel(&client->registrated_channels,
                                           channel_name);
