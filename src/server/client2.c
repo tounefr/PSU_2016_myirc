@@ -1,3 +1,12 @@
+/*
+** client2.c for  in /home/toune/Documents/Epitech/projets/PSU_2016_myirc/src/server
+** 
+** Made by Thomas HENON
+** Login   <thomas.henon@epitech.eu>
+** 
+** Started on  Thu Jun  8 18:09:30 2017 Thomas HENON
+** Last update Thu Jun  8 18:09:30 2017 Thomas HENON
+*/
 
 #include "server.h"
 

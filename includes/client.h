@@ -28,7 +28,6 @@ typedef struct s_cli_command_callback
 } t_cli_command_callback;
 extern t_cli_command_callback cli_commands_callbacks[N_CLI_COMMAND_CALLBACK];
 
-
 char
 parse_irc_packet(t_irc_client *irc_client,
                  t_packet *packet);

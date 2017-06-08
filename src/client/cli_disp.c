@@ -1,3 +1,12 @@
+/*
+** cli_disp.c for  in /home/toune/Documents/Epitech/projets/PSU_2016_myirc/src/client
+** 
+** Made by Thomas HENON
+** Login   <thomas.henon@epitech.eu>
+** 
+** Started on  Thu Jun  8 18:08:26 2017 Thomas HENON
+** Last update Thu Jun  8 18:08:27 2017 Thomas HENON
+*/
 
 #include "client.h"
 

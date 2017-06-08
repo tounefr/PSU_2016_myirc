@@ -53,12 +53,14 @@ char socket_infos(int *socket_fd,
         return exit_error(0, "getpeername failed\n");
     socket_infos->client_ipv4 = my_strdup(inet_ntoa(sockaddr.sin_addr));
     socket_infos->client_port = sockaddr.sin_port;
-    memset(socket_infos->client_hostname, 0, sizeof(socket_infos->client_hostname));
+    memset(socket_infos->client_hostname, 0,
+           sizeof(socket_infos->client_hostname));
     memset(&sockaddr, 0, sizeof(struct sockaddr_in));
     if (-1 == getsockname(*socket_fd, (struct sockaddr*)&sockaddr, &socksize))
         return exit_error(0, "getsockname failed\n");
     socket_infos->server_ipv4 = my_strdup(inet_ntoa(sockaddr.sin_addr));
-    assert(socket_infos->client_ipv4 != NULL && socket_infos->server_ipv4 != NULL);
+    assert(socket_infos->client_ipv4 != NULL &&
+                   socket_infos->server_ipv4 != NULL);
     socket_infos->server_port = sockaddr.sin_port;
     return 1;
 }

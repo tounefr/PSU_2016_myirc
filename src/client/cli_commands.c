@@ -24,54 +24,6 @@ t_cli_command_callback cli_commands_callbacks[N_CLI_COMMAND_CALLBACK] =
     { "channel", on_channel_cli_command, FLAG_LOG_FIRST },
 };
 
-static char
-split_it(char *host_port,
-         char **host,
-         unsigned short *port)
-{
-    char *tmp;
-    int i;
-    char *param;
-    int returnv;
-
-    i = 0;
-    host_port = my_strdup(host_port);
-    tmp = host_port;
-    returnv = 1;
-    *port = DEFAULT_SERVER_PORT;
-    while ((param = strtok(host_port, ":"))) {
-        host_port = NULL;
-        if (i == 0)
-            *host = my_strdup(param);
-        else if (i == 1 && is_number(param))
-            *port = atoi(param);
-        else {
-            returnv = 0;
-            break;
-        }
-        i++;
-    }
-    free(tmp);
-    return returnv;
-}
-
-char
-split_host_port(char *host_port,
-                char **host,
-                unsigned short *port)
-{
-    char returnv;
-    char *hostname;
-
-    if (!split_it(host_port, host, port))
-        return !disp_message(ERR_LEVEL, "Wrong usage");
-    hostname = *host;
-    if (!is_ipv4(*host) && !(*host = resolve_hostname(*host)))
-        return !disp_message(ERR_LEVEL, "Failed to resolve \"%s\"",
-                             hostname);
-    return 1;
-}
-
 void
 identify_me(t_irc_client *irc_client,
             char *nickname)
@@ -98,31 +50,6 @@ on_channel_cli_command(t_irc_client *irc_client,
         return disp_message(ERR_LEVEL,
                             "Vous n'êtes pas connecté à ce channel !");
     irc_client->cur_channel = channel;
-    return 1;
-}
-
-char
-on_server_cli_command(t_irc_client *irc_client,
-                      char *cmd)
-{
-    char *host_port;
-    char *host;
-    unsigned short port;
-
-    if (irc_client->logged)
-        return disp_message(INFO_LEVEL, "Vous êtes déjà connecté");
-    if (!(host_port = cmd_get_param(cmd, 1)))
-        return disp_message(ERR_LEVEL, "Wrong usage");
-    if (!split_host_port(host_port, &host, &port))
-        return 0;
-    disp_message(INFO_LEVEL, "Tentative de connexion vers %s:%d ...",
-                 host, port);
-    if (!socket_init(&irc_client->fd) ||
-        !socket_connect(&irc_client->fd, host, &port))
-        return disp_message(WARN_LEVEL, "Impossible de se connecter");
-    irc_client->logged = 1;
-    disp_message(INFO_LEVEL, "Connecté !");
-    identify_me(irc_client, generate_nickname());
     return 1;
 }
 
@@ -164,7 +91,6 @@ on_join_cli_command(t_irc_client *irc_client,
     if (!(channel_name = normalize_channel_name(channel_name)))
         return disp_message(ERR_LEVEL, "Failed to get channel name");
     if (irc_channel_exists(irc_client->registrated_channels, channel_name))
-        return disp_message(INFO_LEVEL,
-                            "Vous êtes déjà connecté à ce channel");
+        return disp_message(INFO_LEVEL, "Vous êtes déjà connecté à ce channel");
     return dprintf(irc_client->fd, "JOIN #%s\r\n", channel_name);
 }

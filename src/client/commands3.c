@@ -1,3 +1,12 @@
+/*
+** commands3.c for  in /home/toune/Documents/Epitech/projets/PSU_2016_myirc/src/client
+** 
+** Made by Thomas HENON
+** Login   <thomas.henon@epitech.eu>
+** 
+** Started on  Thu Jun  8 18:08:48 2017 Thomas HENON
+** Last update Thu Jun  8 18:08:50 2017 Thomas HENON
+*/
 
 #include "client.h"
 
@@ -36,4 +45,11 @@ on_welcome_command(t_irc_client *client,
     if (!packet->content)
         return 1;
     disp_message(INFO_LEVEL, "%s", packet->content);
+}
+
+char
+on_RPL_LISTSTART_command(t_irc_client *client,
+                         t_packet *packet)
+{
+
 }

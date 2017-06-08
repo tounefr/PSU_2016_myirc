@@ -54,7 +54,7 @@ resolve_hostname(char *host)
     if (!(_hostent = gethostbyname(host)))
         return NULL;
     ips = (struct in_addr **) _hostent->h_addr_list;
-    for(i = 0; ips[i] != NULL; i++)
+    for (i = 0; ips[i] != NULL; i++)
     {
         memset(ip, 0, 100);
         strncpy(ip , inet_ntoa(*ips[i]), 99);

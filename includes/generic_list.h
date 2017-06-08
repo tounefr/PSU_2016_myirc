@@ -20,7 +20,6 @@ typedef struct s_generic_list
     struct s_generic_list *next;
 } t_generic_list;
 
-
 static char
 generic_list_new(t_generic_list **list, void *data);
 char

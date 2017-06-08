@@ -70,7 +70,6 @@ simple_space_parser(t_packet *packet)
             packet->prefix = my_strdup(&token[1]);
         else if (token[0] == ':') {
             packet->content = my_strdup(get_ptr_content(packet->raw));
-           // debug_packet(packet);
             return 1;
         }
         else if (!packet->cmd)
@@ -79,8 +78,6 @@ simple_space_parser(t_packet *packet)
             packet->params[packet->nbr_params++] = my_strdup(token);
         i++;
     }
-//    debug_packet(packet);
-//    free(tmp);
     return 1;
 }
 

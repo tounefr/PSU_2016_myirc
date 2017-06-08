@@ -30,7 +30,6 @@ typedef struct      t_my_select
     fd_set          exceptfds;
 } t_my_select;
 
-
 // my_select.c
 void
 init_my_select(t_my_select *server_select);

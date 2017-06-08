@@ -55,7 +55,6 @@ extern t_command_callback commands_callbacks[N_COMMAND_CALLBACK];
 // my_select.c
 int my_select(t_my_select *ss, t_irc_server *irc_server);
 
-
 // main.c
 t_irc_server *get_irc_server();
 

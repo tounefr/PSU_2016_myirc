@@ -38,13 +38,6 @@ on_PING_command(t_irc_client *client,
 }
 
 char
-on_RPL_LISTSTART_command(t_irc_client *client,
-                         t_packet *packet)
-{
-
-}
-
-char
 on_JOIN_command(t_irc_client *client,
                 t_packet *packet)
 {
