@@ -20,11 +20,14 @@ t_cli_command_callback cli_commands_callbacks[N_CLI_COMMAND_CALLBACK] =
     { "users", on_users_cli_command, FLAG_LOG_FIRST },
     { "names", on_names_cli_command, FLAG_LOG_FIRST },
     { "msg", on_msg_cli_command, FLAG_LOG_FIRST },
-    { "accept_file", on_accept_file_cli_command, FLAG_LOG_FIRST }
+    { "accept_file", on_accept_file_cli_command, FLAG_LOG_FIRST },
+    { "channel", on_channel_cli_command, FLAG_LOG_FIRST },
 };
 
 static char
-split_it(char *host_port, char **host, unsigned short *port)
+split_it(char *host_port,
+         char **host,
+         unsigned short *port)
 {
     char *tmp;
     int i;
@@ -61,21 +64,41 @@ split_host_port(char *host_port,
     char *hostname;
 
     if (!split_it(host_port, host, port))
-        return 0;
+        return !disp_message(ERR_LEVEL, "Wrong usage");
     hostname = *host;
     if (!is_ipv4(*host) && !(*host = resolve_hostname(*host)))
-        return exit_error(0, "Failed to fetch %s\n", hostname);
+        return !disp_message(ERR_LEVEL, "Failed to resolve \"%s\"",
+                             hostname);
     return 1;
 }
 
 void
-identify_me(t_irc_client *irc_client, char *nickname)
+identify_me(t_irc_client *irc_client,
+            char *nickname)
 {
     dprintf(irc_client->fd, "NICK %s\r\n", nickname);
     dprintf(irc_client->fd, "USER %s %s %s :%s\r\n",
             nickname, nickname,
             "127.0.0.1", nickname);
     irc_client->nickname = my_strdup(nickname);
+}
+
+char
+on_channel_cli_command(t_irc_client *irc_client,
+                      char *cmd)
+{
+    char *channel_name;
+    t_channel *channel;
+
+    if (!(channel_name = cmd_get_param(cmd, 1)) ||
+            !(channel_name = normalize_channel_name(channel_name)))
+        return !disp_message(ERR_LEVEL, "Wrong usage");
+    if (!(channel = irc_channel_exists(irc_client->registrated_channels,
+                                 channel_name)))
+        return disp_message(ERR_LEVEL,
+                            "Vous n'êtes pas connecté à ce channel !");
+    irc_client->cur_channel = channel;
+    return 1;
 }
 
 char
@@ -89,9 +112,9 @@ on_server_cli_command(t_irc_client *irc_client,
     if (irc_client->logged)
         return disp_message(INFO_LEVEL, "Vous êtes déjà connecté");
     if (!(host_port = cmd_get_param(cmd, 1)))
-        return exit_error(0, "error\n");
+        return disp_message(ERR_LEVEL, "Wrong usage");
     if (!split_host_port(host_port, &host, &port))
-        return exit_error(0, "error\n");
+        return 0;
     disp_message(INFO_LEVEL, "Tentative de connexion vers %s:%d ...",
                  host, port);
     if (!socket_init(&irc_client->fd) ||
@@ -110,9 +133,8 @@ on_nick_cli_command(t_irc_client *irc_client,
     char *nickname;
 
     if (!(nickname = cmd_get_param(cmd, 1)))
-        return exit_error(0, "error\n");
-    dprintf(irc_client->fd, "NICK %s\r\n", nickname);
-    return 1;
+        return disp_message(ERR_LEVEL, "Wrong usage");
+    return dprintf(irc_client->fd, "NICK %s\r\n", nickname);
 }
 
 char
@@ -123,7 +145,7 @@ on_list_cli_command(t_irc_client *irc_client,
 
     if ((channel_name = cmd_get_param(cmd, 1))) {
         if (!(channel_name = normalize_channel_name(channel_name)))
-            return exit_error(0, "normalize_channel_name\n");
+            return disp_message(ERR_LEVEL, "Failed to get channel name");
         return dprintf(irc_client->fd, "LIST #%s\r\n", channel_name);
     }
     else
@@ -134,33 +156,15 @@ char
 on_join_cli_command(t_irc_client *irc_client,
                     char *cmd)
 {
-    char *channel;
-
-    if (!(channel = cmd_get_param(cmd, 1)))
-        return exit_error(0, "error\n");
-    if (!(channel = normalize_channel_name(channel)))
-        return exit_error(0, "error\n");
-    if (irc_client->cur_channel)
-        return disp_message(INFO_LEVEL,
-                            "Vous ne pouvez pas être connecté "
-                            "à 2 channels en même temps");
-    dprintf(irc_client->fd, "JOIN #%s\r\n", channel);
-    return 1;
-}
-
-char
-on_part_cli_command(t_irc_client *irc_client,
-                    char *cmd)
-{
     char *channel_name;
+    t_channel *channel;
 
     if (!(channel_name = cmd_get_param(cmd, 1)))
-        return exit_error(0, "error\n");
+        return disp_message(ERR_LEVEL, "Wrong usage");
     if (!(channel_name = normalize_channel_name(channel_name)))
-        return exit_error(0, "error\n");
-    printf("%s %s\n", irc_client->cur_channel->name, channel_name);
-    if (!irc_client->cur_channel ||
-            strcmp(irc_client->cur_channel->name, channel_name))
-        return exit_error(0, "Vous n'êtes pas connecté à ce channel\n");
-    dprintf(irc_client->fd, "PART #%s\r\n", irc_client->cur_channel->name);
+        return disp_message(ERR_LEVEL, "Failed to get channel name");
+    if (irc_channel_exists(irc_client->registrated_channels, channel_name))
+        return disp_message(INFO_LEVEL,
+                            "Vous êtes déjà connecté à ce channel");
+    return dprintf(irc_client->fd, "JOIN #%s\r\n", channel_name);
 }

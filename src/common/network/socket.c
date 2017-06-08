@@ -12,6 +12,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 #include "util.h"
 #include "socket.h"
 
@@ -36,7 +38,7 @@ socket_connect(int *fd,
     inet_pton(AF_INET, ip, &(sockaddr.sin_addr));
     socksize = sizeof(sockaddr);
     if (-1 == connect(*fd, (struct sockaddr *)&sockaddr, socksize))
-        return exit_error(0, "connect error : %s\n", strerror(errno));
+        return 0;
     return 1;
 }
 

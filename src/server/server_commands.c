@@ -82,15 +82,15 @@ on_user_command(t_irc_server *irc_server,
         irc_client->logged = 1;
     dprintf(irc_client->fd, ":%s 001 %s :Welcome\r\n",
             IRC_SERVER_HOST, irc_client->pseudo);
-    dprintf(irc_client->fd,
+    /*dprintf(irc_client->fd,
             ":%s 005 %s CHANTYPES=# CHARSET=ascii "
             "NICKLEN=16 CHANNELLEN=50 TOPICLEN=390 "
             ":are supported by this server\r\n",
-            IRC_SERVER_HOST, irc_client->pseudo);
+            IRC_SERVER_HOST, irc_client->pseudo);*/
     dprintf(irc_client->fd, ":%s 376 %s :End of /MOTD command\r\n",
             IRC_SERVER_HOST, irc_client->pseudo);
-    dprintf(irc_client->fd, ":%s MODE %s :+i\r\n",
-            irc_client->pseudo, irc_client->pseudo);
+    /*dprintf(irc_client->fd, ":%s MODE %s :+i\r\n",
+            irc_client->pseudo, irc_client->pseudo);*/
     return 1;
 }
 

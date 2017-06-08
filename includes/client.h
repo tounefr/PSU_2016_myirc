@@ -18,7 +18,7 @@
 
 #include "common.h"
 
-# define N_CLI_COMMAND_CALLBACK 9
+# define N_CLI_COMMAND_CALLBACK 10
 typedef struct s_irc_client t_irc_client;
 typedef struct s_cli_command_callback
 {
@@ -35,6 +35,9 @@ parse_irc_packet(t_irc_client *irc_client,
 
 // cli_commands.c
 
+char
+on_channel_cli_command(t_irc_client *irc_client,
+                       char *cmd);
 char
 on_server_cli_command(t_irc_client*, char*);
 
@@ -148,6 +151,10 @@ send_channel_msg(char *command,
 char*
 cmd_get_param(char *cmd,
               int p);
+
+char*
+cmd_get_content_at(char *cmd, int i);
+
 char
 parse_cli_command(char *command,
                   t_irc_client *irc_client);
@@ -159,7 +166,7 @@ on_cli_data(t_irc_client *irc_client);
 char
 init_irc_client(t_irc_client *irc_client);
 
-void
+char
 on_disconnect(t_irc_client *irc_client);
 
 char

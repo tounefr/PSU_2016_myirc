@@ -55,12 +55,13 @@ CLIENT_SRCS =   $(COMMON_SRCS) \
                 src/client/cli.c \
                 src/client/cli2.c \
                 src/client/client.c \
-                src/client/select.c
+                src/client/select.c \
+                src/client/cli_disp.c
 
 SERVER_OBJS = $(SERVER_SRCS:.c=.o)
 CLIENT_OBJS = $(CLIENT_SRCS:.c=.o)
 
-LDFLAGS+= -g
+LDFLAGS+= -g -W
 
 CFLAGS+= -I./includes -g
 

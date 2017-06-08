@@ -84,8 +84,8 @@ on_join_command(t_irc_server *irc_server,
             irc_client->pseudo, irc_client->user, channel_name);
     dprintf(irc_client->fd, ":%s 331 %s #%s :No topic is set\r\n",
             IRC_SERVER_HOST, irc_client->pseudo, channel_name);
-    dprintf(irc_client->fd, ":%s MODE #%s +ns\r\n",
-            IRC_SERVER_HOST, channel_name);
+    /*dprintf(irc_client->fd, ":%s MODE #%s +ns\r\n",
+            IRC_SERVER_HOST, channel_name);*/
     send_channel_client_list(irc_server,irc_client, channel);
     announce_client_joined(channel, irc_client);
     return 1;

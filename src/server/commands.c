@@ -70,6 +70,7 @@ on_mode_command(t_irc_server *irc_server,
     t_channels_list *channels;
     t_channel *channel;
 
+    return 1;
     if (packet->nbr_params == 0)
         return 1;
     if (packet->params[0][0] == '#') {

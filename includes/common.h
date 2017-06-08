@@ -26,6 +26,8 @@
 # define IRC_SERVER_HOST "irc.lan"
 # define DEFAULT_SERVER_PORT 6667
 
+# define IRC_NICK_MAXLEN 14
+
 # define FLAG_NONE 0
 # define FLAG_LOG_FIRST 1
 
@@ -93,10 +95,21 @@ on_cli_data(t_irc_client *irc_client);*/
 char
 disp_channel_message(char *pseudo,
                      char *channel,
-                     char *message);
+                     char *message,
+                     ...);
+char
+disp_privmsg_message(char *pseudo,
+                     char *message,
+                     ...);
 
 char
-disp_message(char level, const char *message, ...);
+disp_announce_message(char *message,
+                      ...);
+
+char
+disp_message(char type,
+             const char *message,
+             ...);
 
 char
 is_ipv4(char *str);

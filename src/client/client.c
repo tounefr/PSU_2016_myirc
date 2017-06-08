@@ -22,11 +22,12 @@ init_irc_client(t_irc_client *irc_client)
     return 1;
 }
 
-void
+char
 on_disconnect(t_irc_client *irc_client)
 {
     disp_message(INFO_LEVEL, "Disconnected");
     irc_client->logged = 0;
+    return 1;
 }
 
 char
@@ -49,10 +50,8 @@ on_network_data(t_irc_client *irc_client)
     t_packet    *packet;
     char        returnv;
 
-    if ((readv = read(irc_client->fd, buffer, BUFFER_SIZE)) <= 0) {
-        on_disconnect(irc_client);
-        return 1;
-    }
+    if ((readv = read(irc_client->fd, buffer, BUFFER_SIZE)) <= 0)
+        return on_disconnect(irc_client);
     cbuffer_copy(irc_client->cbuffer, buffer, readv);
     while ((raw = cbuffer_extract(irc_client->cbuffer,
                                   IRC_PACKET_SIZE,

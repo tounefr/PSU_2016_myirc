@@ -38,9 +38,11 @@ parse_irc_packet(t_irc_client *irc_client,
     i = -1;
     while (++i < N_COMMAND_CALLBACK) {
         cmd_call = &commands_callbacks[i];
-        if (match_packet_code(cmd_call->code, packet->cmd) ||
+        if (cmd_call && packet->cmd) {
+            if (match_packet_code(cmd_call->code, packet->cmd) ||
                 (cmd_call->cmd && !strcmp(cmd_call->cmd, packet->cmd)))
-            return cmd_call->callback(irc_client, packet);
+                return cmd_call->callback(irc_client, packet);
+        }
     }
     return 1;
     return exit_error(0, "Unknown packet\n");

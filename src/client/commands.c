@@ -58,12 +58,13 @@ on_JOIN_command(t_irc_client *client,
     if (!(channel_name = normalize_channel_name(channel_name)))
         return 0;
     nick_dst = parse_packet_prefix_dst(packet);
-    if (!client->cur_channel && !strcmp(nick_dst, client->nickname))
+    if (!strcmp(nick_dst, client->nickname))
         client->cur_channel = new_irc_channel(&client->registrated_channels,
                                           channel_name);
-    disp_message(INFO_LEVEL, "%s a joint le channel #%s\n",
-                 nick_dst, channel_name);
-    return 1;
+    generic_list_append(&client->registrated_channels, client->cur_channel);
+    return disp_channel_message("", channel_name,
+                                "%s a joint le channel #%s\n",
+                                nick_dst, channel_name);
 }
 
 char
@@ -82,10 +83,13 @@ on_PRIVMSG_command(t_irc_client *client,
 
     if (!packet->prefix || !packet->params[0] || !packet->content)
         return 0;
-    if (!(channel_name = normalize_channel_name(packet->params[0])))
-        return 0;
     nick_src = parse_packet_prefix_dst(packet);
-    disp_channel_message(nick_src, channel_name, packet->content);
+    if (packet->params[0][0] == '#') {
+        if (!(channel_name = normalize_channel_name(packet->params[0])))
+            return 0;
+        return disp_channel_message(nick_src, channel_name, packet->content);
+    }
+    return disp_privmsg_message(nick_src, packet->content);
 }
 
 char

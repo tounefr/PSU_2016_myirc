@@ -28,46 +28,21 @@ cmd_get_param(char *cmd,
     return NULL;
 }
 
-char
-disp_channel_message(char *pseudo,
-                     char *channel,
-                     char *message)
-{
-    char *date_prompt;
-
-    date_prompt = get_prompt_date();
-    printf("%s [#%s] <%s>: %s\n",
-           date_prompt, channel,
-            pseudo, message);
-    free(date_prompt);
-}
-
-char
-disp_message(char type,
-             const char *message,
-             ...)
-{
-    va_list args;
-
-    va_start(args, message);
-    printf("[INFO]: ");
-    vprintf(message, args);
-    printf("\n");
-    va_end(args);
-}
-
 char*
-get_prompt_date()
+cmd_get_content_at(char *cmd,
+                   int i)
 {
-    time_t rawtime;
-    struct tm *info;
-    char *date_buffer;
+    int i2;
 
-    date_buffer = my_malloc(100);
-    time(&rawtime);
-    info = localtime(&rawtime);
-    strftime(date_buffer, 99, "%d/%m/%Y %H:%M", info);
-    return date_buffer;
+    i2 = 0;
+    while (*cmd) {
+        if (*cmd == ' ')
+            i2++;
+        cmd++;
+        if (i2 == i)
+            return cmd;
+    }
+    return NULL;
 }
 
 char
@@ -88,5 +63,24 @@ parse_cli_command(char *command,
         }
     }
     disp_message(ERR_LEVEL, "Unknown command");
+    return 1;
+}
+
+char
+on_cli_data(t_irc_client *irc_client)
+{
+    char *line;
+    size_t n;
+
+    line = NULL;
+    n = 0;
+    if ((getline(&line, &n, stdin)) != -1) {
+        if (line[0] == '/') {
+            if (!parse_cli_command(line, irc_client))
+                return 1;
+        }
+        else
+            send_channel_msg(line, irc_client);
+    }
     return 1;
 }

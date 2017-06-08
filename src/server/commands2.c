@@ -82,6 +82,33 @@ on_who_command(t_irc_server *irc_server,
                t_client *irc_client,
                t_packet *packet)
 {
+    t_clients_list *irc_clients;
+    t_client *client;
+    int users_buffer_len;
+    char *users_buffer;
+    int i;
+    int i2;
+
+    users_buffer_len = IRC_NICK_MAXLEN * 10 + IRC_NICK_MAXLEN + 1;
+    users_buffer = my_malloc(users_buffer_len);
+    irc_clients = irc_server->irc_clients;
+    i = -1;
+
+    do {
+        i = -1;
+        i2 = 0;
+        while ((client = generic_list_foreach(irc_clients)) && ++i < 10) {
+            irc_clients = NULL;
+            strncpy(&users_buffer[i2], client->pseudo, IRC_NICK_MAXLEN);
+            i2 += strlen(client->pseudo) + 1;
+            users_buffer[i2++] = ' ';
+        }
+        //"<channel> <user> <host> <server> <nick> \
+                         <H|G>[*][@|+] :<hopcount> <real name>"
+       // dprintf(irc_client->fd, "352 #%s \r\n");
+    } while (client);
+
+    free(users_buffer);
     dprintf(irc_client->fd, "352 thomas #test ~thomas 163.5.141.79 cherryh.freenode.net thomas H+ :0 thomas\r\n");
     dprintf(irc_client->fd, "315 thomas #test :End of /WHO list\r\n");
     return 1;
