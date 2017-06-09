@@ -27,10 +27,6 @@ buffer_rm_crlf(char *buffer)
     return 0;
 }
 
-# define FLAG_NONE 0
-# define FLAG_APPND_SPACE 1
-# define FLAG_APPND_COMMA 2
-
 static void
 cpy_buff(char *buffer,
          int *off,

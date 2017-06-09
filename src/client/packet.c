@@ -45,5 +45,4 @@ parse_irc_packet(t_irc_client *irc_client,
         }
     }
     return 1;
-    return exit_error(0, "Unknown packet\n");
 }

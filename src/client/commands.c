@@ -14,6 +14,7 @@ t_command_callback commands_callbacks[N_COMMAND_CALLBACK] =
 {
     { NULL, 001, on_welcome_command, FLAG_NONE },
     { "PART", -1, on_PART_command, FLAG_NONE },
+    { "NOTICE", -1, on_NOTICE_command, FLAG_NONE },
     { "NICK", -1, on_NICK_command, FLAG_NONE },
     { "MODE", -1, on_MODE_command, FLAG_NONE },
     { "JOIN", -1, on_JOIN_command, FLAG_NONE },

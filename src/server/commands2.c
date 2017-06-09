@@ -93,6 +93,7 @@ on_who_command(t_irc_server *irc_server,
                t_packet *packet)
 {
     (void)irc_server;
+    (void)irc_client;
     (void)packet;
 
     /*
@@ -123,7 +124,7 @@ on_who_command(t_irc_server *irc_server,
     } while (client);
     free(users_buffer);
      */
-    dprintf(irc_client->fd, "352 thomas #test ~thomas 163.5.141.79 cherryh.freenode.net thomas H+ :0 thomas\r\n");
-    dprintf(irc_client->fd, "315 thomas #test :End of /WHO list\r\n");
+    //dprintf(irc_client->fd, "352 thomas #test ~thomas 163.5.141.79 cherryh.freenode.net thomas H+ :0 thomas\r\n");
+    //dprintf(irc_client->fd, "315 thomas #test :End of /WHO list\r\n");
     return 1;
 }

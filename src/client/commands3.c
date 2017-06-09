@@ -51,3 +51,13 @@ on_welcome_command(t_irc_client *client,
     disp_message(INFO_LEVEL, "%s", packet->content);
     return 1;
 }
+
+char
+on_NOTICE_command(t_irc_client *client,
+                  t_packet *packet)
+{
+    (void)client;
+    if (!packet->content)
+        return 0;
+    return disp_announce_message(packet->content);
+}

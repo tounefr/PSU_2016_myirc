@@ -71,7 +71,7 @@ disp_announce_message(char *message,
 
     va_start(args, message);
     date_prompt = get_prompt_date();
-    printf("%s [ANNOUNCE]: ",
+    printf("%s [NOTICE]: ",
            date_prompt);
     vprintf(message, args);
     va_end(args);

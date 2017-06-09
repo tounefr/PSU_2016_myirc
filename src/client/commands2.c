@@ -14,8 +14,17 @@ char
 on_RPL_LIST_command(t_irc_client *client,
                     t_packet *packet)
 {
+    char *channel_name;
+    char *channel_topic;
+
     (void)client;
-    (void)packet;
+    if (!packet->content || packet->params[1])
+        return 0;
+    if (!(channel_name = normalize_channel_name(packet->params[1])))
+        return 0;
+    channel_topic = packet->content;
+    disp_message(INFO_LEVEL, "#s\t%s",
+                 channel_name, channel_topic);
     return 1;
 }
 

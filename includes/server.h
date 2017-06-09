@@ -22,6 +22,10 @@
 
 #include "common.h"
 
+# define FLAG_NONE 0
+# define FLAG_APPND_SPACE 1
+# define FLAG_APPND_COMMA 2
+
 typedef struct          s_client
 {
     char                *pseudo;
