@@ -86,6 +86,7 @@ on_exit_client(t_irc_server *irc_server,
         generic_list_remove(&channel->clients, irc_client, NULL);
     }
     socket_close(&irc_client->fd);
-    generic_list_remove(&irc_server->irc_clients, irc_client, NULL);//TODO: fix NULL
+    generic_list_remove(&irc_server->irc_clients,
+                        irc_client, NULL);//TODO: fix NULL
     return 1;
 }

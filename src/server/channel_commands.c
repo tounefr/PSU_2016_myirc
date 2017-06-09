@@ -87,7 +87,7 @@ on_join_command(t_irc_server *irc_server,
             IRC_SERVER_HOST, irc_client->pseudo, channel_name);
     /*dprintf(irc_client->fd, ":%s MODE #%s +ns\r\n",
             IRC_SERVER_HOST, channel_name);*/
-    send_channel_client_list(irc_server,irc_client, channel);
+    send_channel_client_list(irc_server, irc_client, channel);
     announce_client_joined(channel, irc_client);
     return 1;
 }
@@ -137,23 +137,4 @@ send_msg_user(t_irc_server *irc_server,
         }
     }
     return 1;
-}
-
-char
-on_privmsg_command(t_irc_server *irc_server,
-                   t_client *irc_client,
-                   t_packet *packet)
-{
-    char *channel_name;
-
-    if (packet->nbr_params != 1)
-        return 1;
-    if (packet->params[0][0] == '#') {
-        if (!(channel_name = normalize_channel_name(packet->params[0])))
-            return 0;
-        return send_msg_channel(irc_server, irc_client,
-                                packet, channel_name);
-    }
-    else
-        return send_msg_user(irc_server, irc_client, packet);
 }

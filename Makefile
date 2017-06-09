@@ -40,6 +40,7 @@ SERVER_SRCS =   $(COMMON_SRCS) \
                 src/server/server.c \
                 src/server/server_commands.c \
                 src/server/channel_commands.c \
+                src/server/channel_commands2.c \
                 src/server/select.c \
                 src/server/packet.c
 

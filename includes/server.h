@@ -169,5 +169,15 @@ char
 send_channel_client_list(t_irc_server *irc_server,
                          t_client *irc_client,
                          t_channel *irc_channel);
+char
+send_msg_channel(t_irc_server *irc_server,
+                 t_client *irc_client,
+                 t_packet *packet,
+                 char *channel_name);
+
+char
+send_msg_user(t_irc_server *irc_server,
+              t_client *irc_client,
+              t_packet *packet);
 
 #endif //PROJETS_SERVER_H

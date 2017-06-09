@@ -85,7 +85,8 @@ on_mode_command(t_irc_server *irc_server,
             return 1;
         if (!(channel = irc_channel_exists(irc_server->channels, channel_name)))
             return 1;
-        dprintf(irc_client->fd, "324 %s #%s +ns\r\n", irc_client->pseudo, channel->name);
+        dprintf(irc_client->fd, "324 %s #%s +ns\r\n",
+                irc_client->pseudo, channel->name);
         return 1;
     }
     return 1;
