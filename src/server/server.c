@@ -42,7 +42,6 @@ server_select_on_data(t_my_select *ss,
 {
     t_client    *client;
     t_clients_list  *clients;
-    t_client    *next;
 
     if (FD_ISSET(irc_server->fd_server, &ss->readfds)) {
         if (!on_server_new_client(irc_server))

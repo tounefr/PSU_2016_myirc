@@ -14,14 +14,18 @@ char
 on_RPL_LIST_command(t_irc_client *client,
                     t_packet *packet)
 {
-
+    (void)client;
+    (void)packet;
+    return 1;
 }
 
 char
 on_RPL_WHOREPLY_command(t_irc_client *client,
                         t_packet *packet)
 {
-
+    (void)client;
+    (void)packet;
+    return 1;
 }
 
 char
@@ -30,6 +34,7 @@ on_RPL_NAMREPLY_command(t_irc_client *client,
 {
     char *channel_name;
 
+    (void)client;
     if (!packet->params[0] || !packet->params[1] ||
             !packet->params[2] || !packet->content)
         return 0;
@@ -43,7 +48,9 @@ char
 on_ERR_NICKNAMEINUSE_command(t_irc_client *client,
                              t_packet *packet)
 {
-    disp_message(WARN_LEVEL, "Ce pseudo est déjà utilisé !");
+    (void)client;
+    (void)packet;
+    return disp_message(WARN_LEVEL, "Ce pseudo est déjà utilisé !");
 }
 
 char
@@ -71,7 +78,7 @@ on_PART_command(t_irc_client *client,
                      channel_name);
         return 1;
     }
-    disp_message(INFO_LEVEL, "%s a quitté le channel #%s",
+    return disp_message(INFO_LEVEL, "%s a quitté le channel #%s",
                  nick_src, channel_name);
 
 }

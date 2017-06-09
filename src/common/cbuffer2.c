@@ -19,6 +19,7 @@ char
     int i;
     char *packet;
 
+    (void)delim;
     packet = my_malloc(packet_size + 1);
     for (i = 0; i < packet_size; i++) {
         packet[i] = cbuffer_get_char_at(cbuffer, cbuffer->cur_off + i);

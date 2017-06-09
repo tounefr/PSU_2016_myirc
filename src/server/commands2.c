@@ -52,6 +52,7 @@ announce_channel_client_part(t_client *irc_client,
         dprintf(client_in_channel->fd, ":%s!~%s@127.0.0.1 PART #%s\r\n",
                 irc_client->pseudo, irc_client->pseudo, irc_channel->name);
     }
+    return 1;
 }
 
 char
@@ -91,6 +92,10 @@ on_who_command(t_irc_server *irc_server,
                t_client *irc_client,
                t_packet *packet)
 {
+    (void)irc_server;
+    (void)packet;
+
+    /*
     t_clients_list *irc_clients;
     t_client *client;
     int users_buffer_len;
@@ -98,7 +103,6 @@ on_who_command(t_irc_server *irc_server,
     int i;
     int i2;
 
-    /*
     users_buffer_len = IRC_NICK_MAXLEN * 10 + IRC_NICK_MAXLEN + 1;
     users_buffer = my_malloc(users_buffer_len);
     irc_clients = irc_server->irc_clients;

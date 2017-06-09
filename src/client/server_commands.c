@@ -46,7 +46,6 @@ split_host_port(char *host_port,
                 char **host,
                 unsigned short *port)
 {
-    char returnv;
     char *hostname;
 
     if (!split_it(host_port, host, port))

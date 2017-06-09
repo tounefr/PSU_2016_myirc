@@ -31,7 +31,9 @@ void*
 generic_list_get_at(t_generic_list *list,
                     int i)
 {
-
+    (void)list;
+    (void)i;
+    return NULL;
 }
 
 int

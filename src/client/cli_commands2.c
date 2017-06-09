@@ -14,6 +14,7 @@ char
 on_users_cli_command(t_irc_client *irc_client,
                      char *cmd)
 {
+    (void)cmd;
     return dprintf(irc_client->fd, "WHO *\r\n");
 }
 
@@ -34,7 +35,6 @@ on_msg_cli_command(t_irc_client *irc_client,
                    char *cmd)
 {
     char *nick_dst;
-    char *msg;
     char *content;
 
     if (!(nick_dst = cmd_get_param(cmd, 1)) ||
@@ -48,7 +48,9 @@ char
 on_accept_file_cli_command(t_irc_client *irc_client,
                            char *cmd)
 {
-
+    (void)irc_client;
+    (void)cmd;
+    return 1;
 }
 
 char

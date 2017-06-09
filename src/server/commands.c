@@ -31,8 +31,10 @@ client_whois(t_irc_server *irc_server,
              t_client *irc_client,
              t_packet *packet)
 {
-    t_clients_list *clients;
-
+    (void)irc_server;
+    (void)irc_client;
+    (void)packet;
+    return 1;
 }
 
 char
@@ -40,7 +42,10 @@ channel_whois(t_irc_server *irc_server,
               t_client *irc_client,
               t_packet *packet)
 {
-
+    (void)irc_server;
+    (void)irc_client;
+    (void)packet;
+    return 1;
 }
 
 char
@@ -48,7 +53,9 @@ on_whois_command(t_irc_server *irc_server,
                 t_client *irc_client,
                 t_packet *packet)
 {
-
+    (void)irc_server;
+    (void)irc_client;
+    (void)packet;
     return 1;
 }
 
@@ -57,6 +64,8 @@ on_ping_command(t_irc_server *irc_server,
                 t_client *irc_client,
                 t_packet *packet)
 {
+    (void)irc_server;
+    (void)packet;
     dprintf(irc_client->fd, "PONG %s\r\n", packet->params[0]);
     return 1;
 }
@@ -67,10 +76,8 @@ on_mode_command(t_irc_server *irc_server,
                 t_packet *packet)
 {
     char *channel_name;
-    t_channels_list *channels;
     t_channel *channel;
 
-    return 1;
     if (packet->nbr_params == 0)
         return 1;
     if (packet->params[0][0] == '#') {

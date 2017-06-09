@@ -15,7 +15,6 @@ char
 free_channel(void *data)
 {
     t_channel *irc_channel;
-    t_client *client;
 
     if (!data)
         return 0;
@@ -41,8 +40,7 @@ normalize_channel_name(char *channel)
         return exit_ptr_error(0, "channel name > 200\n");
     i = -1;
     while (channel[++i]) {
-        if (channel[i] < 0 || channel[i] > 255 ||
-            channel[i] == 7 || channel[i] == ' ')
+        if (channel[i] == 7 || channel[i] == ' ')
             return exit_ptr_error(NULL, "wrong channel name\n");
     }
     channel = my_strdup(channel);

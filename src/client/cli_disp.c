@@ -87,8 +87,10 @@ disp_message(char type,
 {
     va_list args;
 
+    (void)type;
     va_start(args, message);
     vprintf(message, args);
     printf("\n");
     va_end(args);
+    return 1;
 }

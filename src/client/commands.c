@@ -23,7 +23,6 @@ t_command_callback commands_callbacks[N_COMMAND_CALLBACK] =
     { "RPL_LIST", 322, on_RPL_LIST_command, FLAG_NONE },
     { "RPL_WHOREPLY", 352, on_RPL_WHOREPLY_command, FLAG_NONE },
     { "RPL_NAMREPLY", 353, on_RPL_NAMREPLY_command, FLAG_NONE },
-    { "RPL_LISTSTART", 321, on_RPL_LISTSTART_command, FLAG_NONE },
     { "ERR_NICKNAMEINUSE", 433, on_ERR_NICKNAMEINUSE_command, FLAG_NONE },
     { "ERR_NOSUCHNICK", 403, on_ERR_NOSUCHNICK_command, FLAG_NONE }
 };
@@ -34,7 +33,7 @@ on_PING_command(t_irc_client *client,
 {
     if (!packet->content)
         return 0;
-    dprintf(client->fd, "PONG :%s\r\n", packet->content);
+    return dprintf(client->fd, "PONG :%s\r\n", packet->content);
 }
 
 char
@@ -64,7 +63,9 @@ char
 on_MODE_command(t_irc_client *client,
                 t_packet *packet)
 {
-
+    (void)client;
+    (void)packet;
+    return 1;
 }
 
 char
@@ -74,6 +75,7 @@ on_PRIVMSG_command(t_irc_client *client,
     char *nick_src;
     char *channel_name;
 
+    (void)client;
     if (!packet->prefix || !packet->params[0] || !packet->content)
         return 0;
     nick_src = parse_packet_prefix_dst(packet);
@@ -89,5 +91,7 @@ char
 on_RPL_CHANNELMODEIS_command(t_irc_client *client,
                              t_packet *packet)
 {
-
+    (void)client;
+    (void)packet;
+    return 1;
 }

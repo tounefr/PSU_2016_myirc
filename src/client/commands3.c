@@ -27,7 +27,7 @@ on_NICK_command(t_irc_client *client,
         return 1;
     }
     client->nickname = my_strdup(new_nick);
-    disp_message(INFO_LEVEL, "Vous vous appelez maintenant : '%s'",
+    return disp_message(INFO_LEVEL, "Vous vous appelez maintenant : '%s'",
                  client->nickname);
 }
 
@@ -35,21 +35,19 @@ char
 on_ERR_NOSUCHNICK_command(t_irc_client *client,
                           t_packet *packet)
 {
-
+    (void)client;
+    (void)packet;
+    return 1;
 }
 
 char
 on_welcome_command(t_irc_client *client,
                    t_packet *packet)
 {
+    (void)client;
+
     if (!packet->content)
-        return 1;
+        return 0;
     disp_message(INFO_LEVEL, "%s", packet->content);
-}
-
-char
-on_RPL_LISTSTART_command(t_irc_client *client,
-                         t_packet *packet)
-{
-
+    return 1;
 }

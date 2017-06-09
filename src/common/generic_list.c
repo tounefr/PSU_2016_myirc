@@ -25,7 +25,9 @@ char
 generic_list_free(t_generic_list **elem,
                   char (*callback_free_elem)(void *data))
 {
-
+    (void)elem;
+    (void)callback_free_elem;
+    return 1;
 }
 
 char

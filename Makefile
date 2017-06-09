@@ -63,7 +63,7 @@ CLIENT_OBJS = $(CLIENT_SRCS:.c=.o)
 
 LDFLAGS+= -g -W
 
-CFLAGS+= -I./includes -g
+CFLAGS+= -I./includes -g -W -Wall
 
 all: server client
 

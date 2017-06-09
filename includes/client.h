@@ -73,7 +73,7 @@ char
 on_join_command(t_irc_client *client,
                 t_packet *packet);
 
-# define N_COMMAND_CALLBACK 14
+# define N_COMMAND_CALLBACK 13
 typedef struct s_command_callback
 {
     char *cmd;

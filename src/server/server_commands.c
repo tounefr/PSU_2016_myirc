@@ -31,7 +31,7 @@ announce_nick_changed(t_client *irc_client,
                     irc_client->pseudo, packet->params[0]);
         }
     }
-
+    return 1;
 }
 
 char
@@ -39,8 +39,6 @@ on_nick_command(t_irc_server *irc_server,
                 t_client *irc_client,
                 t_packet *packet)
 {
-    t_packet *res;
-
     if (packet->nbr_params == 0)
         return dprintf(irc_client->fd, ":%s 431 :No nickname given\r\n",
                        IRC_SERVER_HOST);
@@ -85,8 +83,7 @@ on_user_command(t_irc_server *irc_server,
                 t_client *irc_client,
                 t_packet *packet)
 {
-    t_packet *res;
-
+    (void)irc_server;
     if (packet->nbr_params < 3)
         return dprintf(irc_client->fd, ":%s 461 :Not enough parameters\r\n",
                        IRC_SERVER_HOST);
@@ -106,6 +103,8 @@ on_quit_command(t_irc_server *irc_server,
                 t_client *irc_client,
                 t_packet *packet)
 {
+    (void)irc_server;
+    (void)packet;
     on_exit_client(irc_server, irc_client);
     return 1;
 }

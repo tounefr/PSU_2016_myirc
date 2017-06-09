@@ -22,7 +22,6 @@ init_client(t_client *irc_client,
     irc_client->cbuffer = cbuffer_new(IRC_PACKET_SIZE);
     irc_client->registred_channels = NULL;
     socket_infos(&fd, &irc_client->socket_infos);
-    irc_client->socket_infos;
 }
 
 void
@@ -30,7 +29,6 @@ new_irc_client(t_irc_server *irc_server,
                int fd_new_client)
 {
     t_client *irc_client;
-    t_clients_list *clients;
 
     irc_client = my_malloc(sizeof(t_client));
     init_client(irc_client, fd_new_client);
@@ -55,6 +53,7 @@ free_irc_client(void *data)
         cbuffer_free(irc_client->cbuffer);
     free_socket_infos(&irc_client->socket_infos);
 //    free(irc_client);
+    return 1;
 }
 
 char

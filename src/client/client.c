@@ -48,7 +48,6 @@ on_network_data(t_irc_client *irc_client)
     int         readv;
     char        *raw;
     t_packet    *packet;
-    char        returnv;
 
     if ((readv = read(irc_client->fd, buffer, BUFFER_SIZE)) <= 0)
         return on_disconnect(irc_client);
@@ -60,7 +59,7 @@ on_network_data(t_irc_client *irc_client)
         #ifdef DEBUG_MODE
         disp_message(DEBUG_LEVEL, "Recv << %s", raw);
         #endif
-        returnv = parse_irc_packet(irc_client, packet);
+        parse_irc_packet(irc_client, packet);
         free_packet(packet);
     }
     return 1;

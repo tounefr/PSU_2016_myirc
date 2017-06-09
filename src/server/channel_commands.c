@@ -21,6 +21,7 @@ send_channel_client_list(t_irc_server *irc_server,
     int i;
     int i2;
 
+    (void)irc_server;
     clients_in_channel = irc_channel->clients;
     do {
         i = -1;
@@ -37,7 +38,7 @@ send_channel_client_list(t_irc_server *irc_server,
                 IRC_SERVER_HOST, irc_client->pseudo,
                 irc_channel->name, pseudos_buffer);
     } while (client_in_channel);
-    dprintf(irc_client->fd, ":%s 366 %s #%s :End of /NAMES list.\r\n",
+    return dprintf(irc_client->fd, ":%s 366 %s #%s :End of /NAMES list.\r\n",
             IRC_SERVER_HOST, irc_client->pseudo, irc_channel->name);
 }
 
@@ -56,6 +57,7 @@ announce_client_joined(t_channel *irc_channel,
         dprintf(client_in_channel->fd, ":%s JOIN #%s\r\n",
                 irc_client->pseudo, irc_channel->name);
     }
+    return 1;
 }
 
 char
@@ -63,7 +65,6 @@ on_join_command(t_irc_server *irc_server,
                 t_client *irc_client,
                 t_packet *packet)
 {
-    t_packet *res;
     char *channel_name;
     t_channel *channel;
 
@@ -115,6 +116,7 @@ send_msg_channel(t_irc_server *irc_server,
         dprintf(client->fd, ":%s PRIVMSG #%s :%s\r\n",
                 irc_client->pseudo, channel->name, packet->content);
     }
+    return 1;
 }
 
 char
@@ -134,6 +136,7 @@ send_msg_user(t_irc_server *irc_server,
                            packet->content);
         }
     }
+    return 1;
 }
 
 char
@@ -145,10 +148,12 @@ on_privmsg_command(t_irc_server *irc_server,
 
     if (packet->nbr_params != 1)
         return 1;
-    if (packet->params[0][0] == '#')
+    if (packet->params[0][0] == '#') {
+        if (!(channel_name = normalize_channel_name(packet->params[0])))
+            return 0;
         return send_msg_channel(irc_server, irc_client,
                                 packet, channel_name);
+    }
     else
         return send_msg_user(irc_server, irc_client, packet);
-    return 1;
 }

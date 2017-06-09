@@ -86,6 +86,7 @@ on_join_cli_command(t_irc_client *irc_client,
     char *channel_name;
     t_channel *channel;
 
+    (void)channel;
     if (!(channel_name = cmd_get_param(cmd, 1)))
         return disp_message(ERR_LEVEL, "Wrong usage");
     if (!(channel_name = normalize_channel_name(channel_name)))

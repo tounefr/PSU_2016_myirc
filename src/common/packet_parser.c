@@ -39,6 +39,7 @@ char
     return nickname;
 }
 
+/*
 static void
 debug_packet(t_packet *packet)
 {
@@ -51,6 +52,7 @@ debug_packet(t_packet *packet)
     printf("content : %s\n", packet->content);
     printf("====\n");
 }
+*/
 
 char
 simple_space_parser(t_packet *packet)
@@ -58,11 +60,9 @@ simple_space_parser(t_packet *packet)
     char *token;
     int i;
     char *buffer;
-    char *tmp;
 
     buffer_rm_crlf(packet->raw);
     buffer = strdup_irc_packet(packet->raw);
-    tmp = buffer;
     i = 0;
     while ((token = strtok(buffer, " "))) {
         buffer = NULL;
