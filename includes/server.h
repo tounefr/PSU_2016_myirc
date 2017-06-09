@@ -165,4 +165,9 @@ char free_channel(void *data);
 // channel_commands.c
 char check_pseudo_already_used(t_irc_server *irc_server, char *pseudo);
 
+char
+send_channel_client_list(t_irc_server *irc_server,
+                         t_client *irc_client,
+                         t_channel *irc_channel);
+
 #endif //PROJETS_SERVER_H

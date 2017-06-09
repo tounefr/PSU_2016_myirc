@@ -57,7 +57,9 @@ on_network_data(t_irc_client *irc_client)
                                   IRC_PACKET_SIZE,
                                   "\r\n"))) {
         packet = init_packet(raw);
+        #ifdef DEBUG_MODE
         disp_message(DEBUG_LEVEL, "Recv << %s", raw);
+        #endif
         returnv = parse_irc_packet(irc_client, packet);
         free_packet(packet);
     }

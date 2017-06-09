@@ -51,5 +51,5 @@ start_irc_client()
 int
 main() {
     signal(SIGINT, sigint_handler);
-    return !start_irc_client();
+    return (start_irc_client() ? 0 : 84);
 }

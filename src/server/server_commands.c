@@ -42,7 +42,8 @@ on_nick_command(t_irc_server *irc_server,
     t_packet *res;
 
     if (packet->nbr_params == 0)
-        return dprintf(irc_client->fd, "431 :No nickname given\r\n");
+        return dprintf(irc_client->fd, ":%s 431 :No nickname given\r\n",
+                       IRC_SERVER_HOST);
     if (check_pseudo_already_used(irc_server, packet->params[0]))
         return dprintf(irc_client->fd,
                        "433 %s %s :Nickname is already in use\r\n",
@@ -62,6 +63,20 @@ on_names_command(t_irc_server *irc_server,
                  t_client *irc_client,
                  t_packet *packet)
 {
+    t_channels_list *channels;
+    t_channel *channel;
+    char *channel_name;
+
+    if (!(channel_name = packet->params[0]))
+        return 0;
+    if (!(channel_name = normalize_channel_name(channel_name)))
+        return 0;
+    channels = irc_server->channels;
+    if (!(channel = irc_channel_exists(channels, channel_name)))
+        return dprintf(irc_client->fd, ":%s 401 %s #%s"
+                               " :No such nick/channel\r\n",
+                       IRC_SERVER_HOST, irc_client->pseudo, channel_name);
+    send_channel_client_list(irc_server, irc_client, channel);
     return 1;
 }
 

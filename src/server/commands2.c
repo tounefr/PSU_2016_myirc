@@ -98,6 +98,7 @@ on_who_command(t_irc_server *irc_server,
     int i;
     int i2;
 
+    /*
     users_buffer_len = IRC_NICK_MAXLEN * 10 + IRC_NICK_MAXLEN + 1;
     users_buffer = my_malloc(users_buffer_len);
     irc_clients = irc_server->irc_clients;
@@ -116,8 +117,8 @@ on_who_command(t_irc_server *irc_server,
                          <H|G>[*][@|+] :<hopcount> <real name>"
        // dprintf(irc_client->fd, "352 #%s \r\n");
     } while (client);
-
     free(users_buffer);
+     */
     dprintf(irc_client->fd, "352 thomas #test ~thomas 163.5.141.79 cherryh.freenode.net thomas H+ :0 thomas\r\n");
     dprintf(irc_client->fd, "315 thomas #test :End of /WHO list\r\n");
     return 1;
