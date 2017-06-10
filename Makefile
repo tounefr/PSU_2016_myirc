@@ -63,9 +63,9 @@ CLIENT_SRCS =   $(COMMON_SRCS) \
 SERVER_OBJS = $(SERVER_SRCS:.c=.o)
 CLIENT_OBJS = $(CLIENT_SRCS:.c=.o)
 
-LDFLAGS+= -g -W -Wall
+LDFLAGS+= -W -Wall
 
-CFLAGS+= -I./includes -g -W -Wall
+CFLAGS+= -I./includes -W -Wall
 
 all: server client
 
