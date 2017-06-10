@@ -16,9 +16,8 @@
 #include "socket.h"
 #include "generic_list.h"
 
-# define DEBUG_MODE 1
+/*# define DEBUG_MODE 1*/
 # define LISTEN_ADDRESS "0.0.0.0"
-# define BUFFER_SIZE 512
 # define IRC_PACKET_SIZE 512
 # define IRC_CLIENT_MAX_CHANNELS 10
 # define IRC_SERVER_MAX_CHANNELS 100

@@ -18,12 +18,11 @@ on_RPL_LIST_command(t_irc_client *client,
     char *channel_topic;
 
     (void)client;
-    if (!packet->content || packet->params[1])
+    if (!packet->content || !packet->params[1])
         return 0;
-    if (!(channel_name = normalize_channel_name(packet->params[1])))
-        return 0;
+    channel_name = packet->params[1];
     channel_topic = packet->content;
-    disp_message(INFO_LEVEL, "#s\t%s",
+    disp_message(INFO_LEVEL, "#%s\t%s",
                  channel_name, channel_topic);
     return 1;
 }
@@ -83,9 +82,9 @@ on_PART_command(t_irc_client *client,
                             channel, NULL);
         if (channel == client->cur_channel)
             client->cur_channel = NULL;
-        disp_message(INFO_LEVEL, "Vous avez quitté le channel #%s",
+        return disp_message(INFO_LEVEL,
+                            "Vous avez quitté le channel #%s",
                      channel_name);
-        return 1;
     }
     return disp_message(INFO_LEVEL, "%s a quitté le channel #%s",
                  nick_src, channel_name);

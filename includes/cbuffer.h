@@ -16,7 +16,9 @@
 typedef struct s_circular_buffer
 {
     int size;
-    int cur_off;
+    int start_off;
+    int end_off;
+    int av_size;
     char *buffer;
 } t_circular_buffer;
 

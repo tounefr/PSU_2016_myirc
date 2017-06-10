@@ -18,7 +18,9 @@ cbuffer_new(int size)
 
     cbuffer = my_malloc(sizeof(t_circular_buffer));
     cbuffer->size = size;
-    cbuffer->cur_off = 0;
+    cbuffer->start_off = 0;
+    cbuffer->end_off = 0;
+    cbuffer->av_size = size;
     cbuffer->buffer = my_malloc(size);
     return cbuffer;
 }
@@ -36,14 +38,7 @@ cbuffer_free(t_circular_buffer *cbuffer)
 void
 cbuffer_debug(t_circular_buffer *cbuffer)
 {
-    int i;
-
-    i = -1;
-    printf("Buffer : \n");
-    while (++i < cbuffer->size) {
-        printf("%c", cbuffer_get_char_at(cbuffer, cbuffer->cur_off + i));
-    }
-    printf("\n\n");
+    (void)cbuffer;
 }
 
 char

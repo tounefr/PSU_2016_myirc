@@ -40,8 +40,10 @@ parse_irc_packet(t_irc_client *irc_client,
         cmd_call = &commands_callbacks[i];
         if (cmd_call && packet->cmd) {
             if (match_packet_code(cmd_call->code, packet->cmd) ||
-                (cmd_call->cmd && !strcmp(cmd_call->cmd, packet->cmd)))
-                return cmd_call->callback(irc_client, packet);
+                (cmd_call->cmd && !strcmp(cmd_call->cmd, packet->cmd))) {
+                cmd_call->callback(irc_client, packet);
+                return 1;
+            }
         }
     }
     return 1;

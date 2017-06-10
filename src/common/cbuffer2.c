@@ -18,17 +18,23 @@ char
 {
     int i;
     char *packet;
+    char c1;
+    char c2;
 
     (void)delim;
-    packet = my_malloc(packet_size + 1);
-    for (i = 0; i < packet_size; i++) {
-        packet[i] = cbuffer_get_char_at(cbuffer, cbuffer->cur_off + i);
-        if (i >= 2 && packet[i] == '\n' && packet[i - 1] == '\r') {
-
-            for (int i2 = 0; i2 <= i; i2++)
-                cbuffer_set_char_at(cbuffer, cbuffer->cur_off + i2, 0);
-
-            cbuffer->cur_off += (i + 1) % cbuffer->size;
+    packet = my_malloc(packet_size);
+    i = -1;
+    while (++i < packet_size) {
+        c1 = cbuffer_get_char_at(cbuffer, cbuffer->start_off + i);
+        c2 = cbuffer_get_char_at(cbuffer, cbuffer->start_off + i + 1);
+        packet[i] = c1;
+        if (c1 == '\r' && c2 == '\n') {
+            for (int i2 = 0; i2 <= (i + 1); i2++) {
+                cbuffer_set_char_at(cbuffer, cbuffer->start_off + i2, 0);
+                cbuffer->av_size++;
+            }
+            packet[i + 1] = c2;
+            cbuffer->start_off = (cbuffer->start_off + i + 2) % cbuffer->size;
             return packet;
         }
     }
@@ -44,8 +50,14 @@ cbuffer_copy(t_circular_buffer *cbuffer,
     int i;
 
     i = -1;
-    while (++i < buff_size)
+    while (++i < buff_size) {
+        char c = cbuffer_get_char_at(cbuffer, cbuffer->end_off);
+        assert(c == 0);
         cbuffer_set_char_at(cbuffer,
-                            cbuffer->cur_off + i,
-                            buff[i % buff_size]);
+                            cbuffer->end_off,
+                            buff[i]);
+        cbuffer->av_size--;
+        assert(cbuffer->av_size >= 0);
+        cbuffer->end_off = (cbuffer->end_off + 1) % cbuffer->size;
+    }
 }

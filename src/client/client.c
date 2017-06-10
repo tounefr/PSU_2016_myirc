@@ -44,12 +44,14 @@ client_select_on_data(t_irc_client *irc_client)
 char
 on_network_data(t_irc_client *irc_client)
 {
-    char        buffer[BUFFER_SIZE + 1];
+    char        buffer[IRC_PACKET_SIZE];
     int         readv;
     char        *raw;
     t_packet    *packet;
 
-    if ((readv = read(irc_client->fd, buffer, BUFFER_SIZE)) <= 0)
+    memset(buffer, 0, sizeof(buffer));
+    if ((readv = read(irc_client->fd, buffer,
+                      irc_client->cbuffer->av_size)) <= 0)
         return on_disconnect(irc_client);
     cbuffer_copy(irc_client->cbuffer, buffer, readv);
     while ((raw = cbuffer_extract(irc_client->cbuffer,
@@ -59,7 +61,8 @@ on_network_data(t_irc_client *irc_client)
         #ifdef DEBUG_MODE
         disp_message(DEBUG_LEVEL, "Recv << %s", raw);
         #endif
-        parse_irc_packet(irc_client, packet);
+        if (!parse_irc_packet(irc_client, packet))
+            disp_message(DEBUG_LEVEL, "Unknown packet << %s", raw);
         free_packet(packet);
     }
     return 1;
