@@ -29,7 +29,9 @@ on_client_data(t_irc_server *irc_server,
                                   IRC_PACKET_SIZE,
                                   "\r\n"))) {
         packet = init_packet(raw);
+        #ifdef DEBUG_MODE
         printf("Recv << %s", raw);
+        #endif
         parse_irc_packet(irc_server, irc_client, packet);
         free_packet(packet);
     }

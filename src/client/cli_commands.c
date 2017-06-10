@@ -22,6 +22,7 @@ t_cli_command_callback cli_commands_callbacks[N_CLI_COMMAND_CALLBACK] =
     { "msg", on_msg_cli_command, FLAG_LOG_FIRST },
     { "accept_file", on_accept_file_cli_command, FLAG_LOG_FIRST },
     { "channel", on_channel_cli_command, FLAG_LOG_FIRST },
+    { "help", on_help_cli_command, FLAG_NONE },
 };
 
 void

@@ -52,7 +52,6 @@ free_irc_client(void *data)
     if (irc_client->cbuffer)
         cbuffer_free(irc_client->cbuffer);
     free_socket_infos(&irc_client->socket_infos);
-//    free(irc_client);
     return 1;
 }
 

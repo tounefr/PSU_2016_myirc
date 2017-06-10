@@ -67,7 +67,9 @@ send_reply_packet(int fd,
         cpy_buff(buffer, &i2, res->content, FLAG_APPND_COMMA);
     cpy_buff(buffer, &i2, "\r\n", FLAG_NONE);
     free_packet(res);
+    #ifdef DEBUG_MODE
     printf("Send >> %s\n", buffer);
+    #endif
     return socket_send(&fd, buffer);
 }
 

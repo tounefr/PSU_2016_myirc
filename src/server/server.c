@@ -61,23 +61,25 @@ start_irc_server(t_irc_server *irc_server)
 {
     t_my_select ss;
     int retrv;
+    int i;
 
-    if (!init_irc_server(irc_server))
-        return 0;
+    i = -1;
     while (1) {
         retrv = my_select(&ss, irc_server);
         if (retrv == 0) {
-            /*printf("There is %d clients connected and %d channels\n",
-                   generic_list_count(irc_server->irc_clients),
-                   generic_list_count(irc_server->channels));*/
+            if (++i >= 1000) {
+                printf("[INFO] There is %d clients connected and %d channels\n",
+                       generic_list_count(irc_server->irc_clients),
+                       generic_list_count(irc_server->channels));
+                i = -1;
+            }
         }
         else if (retrv == -1) {
             printf("select error : %s\n", strerror(errno));
             break;
         }
-        else if (!server_select_on_data(&ss, irc_server)) {
+        else if (!server_select_on_data(&ss, irc_server))
             break;
-        }
     }
     socket_close(&irc_server->fd_server);
     return 1;

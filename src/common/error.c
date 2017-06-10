@@ -16,8 +16,9 @@ exit_error(char returnv,
            ...)
 {
     va_list args;
+
     va_start(args, format);
-    fprintf(stderr, format, args);
+    vfprintf(stderr, format, args);
     va_end(args);
     return returnv;
 }

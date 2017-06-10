@@ -31,8 +31,9 @@ on_list_command(t_irc_server *irc_server,
     while ((channel = generic_list_foreach(channels))) {
         channels = NULL;
         if (!channel_to_find || strstr(channel->name, channel_to_find)) {
-            dprintf(irc_client->fd, "322 %s #%s 4 :%s\r\n",
-                    irc_client->pseudo, channel->name, channel->topic);
+            dprintf(irc_client->fd, ":%s 322 %s #%s :%s\r\n",
+                    IRC_SERVER_HOST, irc_client->pseudo,
+                    channel->name, channel->topic);
         }
     }
     return dprintf(irc_client->fd, ":%s 323 %s :End of /LIST\r\n",

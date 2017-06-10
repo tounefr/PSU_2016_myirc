@@ -49,6 +49,7 @@ CLIENT_SRCS =   $(COMMON_SRCS) \
                 src/client/cli_commands.c \
                 src/client/server_commands.c \
                 src/client/cli_commands2.c \
+                src/client/cli_commands3.c \
                 src/client/commands.c \
                 src/client/commands2.c \
                 src/client/commands3.c \
@@ -62,7 +63,7 @@ CLIENT_SRCS =   $(COMMON_SRCS) \
 SERVER_OBJS = $(SERVER_SRCS:.c=.o)
 CLIENT_OBJS = $(CLIENT_SRCS:.c=.o)
 
-LDFLAGS+= -g -W
+LDFLAGS+= -g -W -Wall
 
 CFLAGS+= -I./includes -g -W -Wall
 
