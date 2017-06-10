@@ -36,7 +36,6 @@ on_help_cli_command(t_irc_client *irc_client,
          "/channel $channelchange the current channel\n"
          "/accept file $nickname:"
          "accepts the reception of a file coming from one of the channel’s\n"
-             "users\n"
-    );
+             "users\n");
     return 1;
 }

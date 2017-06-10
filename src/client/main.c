@@ -27,20 +27,7 @@ sigint_handler(int signum)
 
 static void disp_headers()
 {
-    printf("\n"
-       "               _____  __   ___    "
-       "         ___ _ _            _   \n"
-       "  /\\/\\  _   _  \\_   \\/__\\ / _"
-       "_\\           / __| (_) ___ _ __ | |_ \n"
-       " /    \\| | | |  / /\\/ \\/// /   "
-       "  _____   / /  | | |/ _ | '_ \\| __|\n"
-       "/ /\\/\\ | |_| /\\/ /_/ _  / /___ "
-       " |_____| / /___| | |  __| | | | |_ \n"
-       "\\/    \\/\\__, \\____/\\/ \\_\\__"
-       "__/          \\____/|_|_|\\___|_| |_|\\__|\n"
-       "        |___/                     "
-       "                                \n"
-       " _             _                  \n");
+    printf("[MYIRC-Client]\n");
     printf("A very basic IRC client by thomas.henon@epitech.eu"
                    " & valentin.strassel@epitech.eu\n\n"
                    "Type /help to list the available commands\n\n");

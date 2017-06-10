@@ -70,16 +70,6 @@ on_list_cli_command(t_irc_client *irc_client,
                     char *cmd)
 {
     (void)cmd;
-    /*
-    char *channel_name;
-    if ((channel_name = cmd_get_param(cmd, 1))) {
-        if (!(channel_name = normalize_channel_name(channel_name)))
-            return disp_message(ERR_LEVEL, "Failed to get channel name");
-        return dprintf(irc_client->fd, "LIST #%s\r\n", channel_name);
-    }
-    else
-        return dprintf(irc_client->fd, "LIST\r\n");
-     */
     return dprintf(irc_client->fd, "LIST\r\n");
 }
 

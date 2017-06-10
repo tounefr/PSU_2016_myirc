@@ -19,12 +19,7 @@ usage(char *bin)
 
 static void disp_headers()
 {
-    printf("\n"
-       "   __  ___     _______  _____        ____                    \n"
-       "  /  |/  __ __/  _/ _ \\/ ___/ ____  / _____ _____  _____ ____\n"
-       " / /|_/ / // _/ // , _/ /__  /___/ _\\ \\/ -_/ __| |/ / -_/ __/\n"
-       "/_/  /_/\\_, /___/_/|_|\\___/       /___/\\__/_/  |___/\\__/_/   \n"
-       "       /___/                                                 \n\n");
+    printf("[MYIRC-Server]\n");
     printf("A very basic IRC server by thomas.henon@epitech.eu"
                    " & valentin.strassel@epitech.eu\n\n");
 }
